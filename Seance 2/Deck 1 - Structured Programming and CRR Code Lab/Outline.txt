@@ -1,0 +1,60 @@
+FRE6883 -- Financial Computation
+Recitation 2: Structured Programming and CRR Code Lab
+
+AUDIENCE BASELINE
+Students have completed Lecture 2. They have seen sequential, conditional, and
+iterative control flow; binomial stock nodes; nested loops; fixed-size arrays;
+input validation; functions; namespaces; pass by value/reference; and the CRR
+backward-induction pricer. This recitation emphasizes retrieval, completion,
+tracing, debugging, and integration rather than first exposure.
+
+SESSION OUTCOME
+By the end, students can complete, trace, test, and explain a small modular CRR
+pricer because they have rebuilt it from independently testable functions and
+verified the data flow from model inputs to Price[0].
+
+FORMAT
+35 Beamer frames, approximately 100 minutes. Twelve guided activities use a
+problem frame followed by a solution frame (the final integration activity uses
+two problem and two solution frames). Students first predict or complete code,
+then compare and explain. Timings below include student work and discussion.
+
+TIMING
+00:00-00:06  Opening, outcome, and structured-programming recall       6 min
+00:06-00:27  Stock nodes, nested loops, and flat-array storage         21 min
+00:27-00:36  Model invariants and validation                           9 min
+00:36-00:56  Functions, namespaces, values, and references             20 min
+00:56-01:12  Payoff and terminal-row construction                      16 min
+01:12-01:26  CRR backward induction and overwrite order                14 min
+01:26-01:36  Assemble the complete pricer                              10 min
+01:36-01:40  Test matrix and exit ticket                                4 min
+Total                                                               100 min
+
+ACTIVITIES
+1. Complete CalculateAssetPrice from the stock-node formula.
+2. Complete nested loops that visit every node exactly once.
+3. Store all visited nodes in a one-dimensional array.
+4. Complete model-data and no-arbitrage validation.
+5. Implement and hand-check RiskNeutProb.
+6. Predict pass-by-value and pass-by-reference effects.
+7. Complete GetInputData with output references.
+8. Implement CallPayoff with a boundary case at the strike.
+9. Fill the terminal option-value row.
+10. Complete the backward-induction loops and update.
+11. Diagnose why a decreasing inner loop corrupts in-place data.
+12. Assemble a guarded, standard-C++ PriceByCRR function.
+
+TECHNICAL NOTES
+- The deck follows the visual and C++ conventions of Recitation 1 Decks 1 and 5.
+- The model uses gross one-period factors with 0 < D < R < U and S0 > 0.
+- The corrected no-arbitrage test is R <= D || R >= U. Lecture 2 pages 24-25
+  show U <= D in the second condition; that repeats an earlier range test and
+  fails to reject R <= D.
+- The final pricer uses a fixed compile-time capacity SIZE = 9 and accepts
+  1 <= N <= 8. This avoids Lecture 2's variable-length array, which is not
+  standard C++.
+- For the shared example S0=100, U=1.2, D=0.8, R=1.1, K=100, N=2, terminal
+  payoffs are [0,0,44], the time-1 row is [0,30], and Price[0] is 20.4545.
+- Solution frames are intentionally separate so the instructor can stop before
+  revealing them.
+

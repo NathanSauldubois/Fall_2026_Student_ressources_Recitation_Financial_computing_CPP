@@ -1,0 +1,1033 @@
+% !TEX program = pdflatex
+% FRE6883 Recitation 2 -- Structured Programming and CRR Code Lab
+\documentclass[10pt,aspectratio=169]{beamer}
+
+% Language & encoding
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[english]{babel}
+\usepackage{lmodern}
+\usepackage{microtype}
+\DisableLigatures{encoding=*,family=tt*}
+
+% Math / tables / layout
+\usepackage{amsmath,amssymb,bm,mathtools}
+\usepackage{booktabs}
+\usepackage{multicol}
+\usepackage{changepage}
+
+% Graphics
+\usepackage{graphicx}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,calc,decorations.pathreplacing}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+
+% Theme (Metropolis)
+\usetheme[numbering=fraction,progressbar=frametitle]{metropolis}
+\setbeamertemplate{frame numbering}[fraction]
+\setbeamertemplate{navigation symbols}{}
+
+% Bootcamp palette
+\definecolor{BootcampBlueDark}{HTML}{1A3C68}
+\definecolor{BootcampBlue}{RGB}{31,110,178}
+\definecolor{AccentGold}{HTML}{DAA520}
+\definecolor{SoftGray}{RGB}{245,246,248}
+\definecolor{TextBlack}{HTML}{000000}
+\definecolor{Crimson}{HTML}{990000}
+\definecolor{MatrixGreen}{HTML}{228B22}
+\definecolor{MatrixRed}{HTML}{B22222}
+
+% Global formatting
+\setbeamercolor{normal text}{fg=TextBlack,bg=white}
+\setbeamercolor{title}{fg=TextBlack}
+\setbeamercolor{structure}{fg=BootcampBlueDark}
+\setbeamercolor{progress bar}{fg=BootcampBlueDark,bg=gray!30}
+
+\setbeamercolor{frametitle}{bg=BootcampBlueDark,fg=white}
+\setbeamerfont{frametitle}{series=\bfseries,size=\large}
+\setbeamertemplate{frametitle}{
+  \nointerlineskip
+  \begin{beamercolorbox}[wd=\paperwidth,ht=3.2ex,dp=1.4ex,leftskip=1em,rightskip=1em]{frametitle}
+    \usebeamerfont{frametitle}\insertframetitle
+  \end{beamercolorbox}
+}
+
+\setbeamercolor{block title example}{bg=BootcampBlueDark!90!black,fg=white}
+\setbeamercolor{block body example}{bg=BootcampBlueDark!5!white,fg=black}
+\setbeamercolor{block title proposition}{bg=MatrixGreen!75!black,fg=white}
+\setbeamercolor{block body proposition}{bg=MatrixGreen!7!white,fg=black}
+\setbeamercolor{block title illustration}{bg=AccentGold!85!black,fg=white}
+\setbeamercolor{block body illustration}{bg=AccentGold!10!white,fg=black}
+\setbeamercolor{block title proof}{bg=gray!70!black,fg=white}
+\setbeamercolor{block body proof}{bg=SoftGray,fg=black}
+\setbeamertemplate{blocks}[rounded][shadow=false]
+
+\newenvironment{definitionblock}[1]{%
+  \par\vspace{0.3em}%
+  \begin{beamercolorbox}[
+      wd=\textwidth,sep=0.35em,leftskip=0.3em,rightskip=0.6em,
+      rounded=false,shadow=false
+    ]{block title example}%
+    \raisebox{0.15em}{\usebeamerfont{block title example}#1}%
+  \end{beamercolorbox}%
+  \vspace{-0.4em}%
+  \begin{beamercolorbox}[
+      wd=\textwidth,sep=0.55em,leftskip=0.6em,rightskip=0.6em,
+      rounded=false,shadow=false
+    ]{block body example}%
+    \usebeamerfont{block body example}%
+}{%
+  \end{beamercolorbox}%
+  \par\vspace{0.45em}%
+}
+
+\newenvironment{propositionblock}[1]{%
+  \par\vspace{0.3em}%
+  \begin{beamercolorbox}[
+      wd=\textwidth,sep=0.35em,leftskip=0.3em,rightskip=0.6em,
+      rounded=false,shadow=false
+    ]{block title proposition}%
+    \raisebox{0.15em}{\usebeamerfont{block title example}#1}%
+  \end{beamercolorbox}%
+  \vspace{-0.4em}%
+  \begin{beamercolorbox}[
+      wd=\textwidth,sep=0.55em,leftskip=0.6em,rightskip=0.6em,
+      rounded=false,shadow=false
+    ]{block body proposition}%
+    \usebeamerfont{block body example}%
+}{%
+  \end{beamercolorbox}%
+  \par\vspace{0.45em}%
+}
+
+\newenvironment{illustrationblock}[1]{%
+  \par\vspace{0.3em}%
+  \begin{beamercolorbox}[
+      wd=\textwidth,sep=0.35em,leftskip=0.3em,rightskip=0.6em,
+      rounded=false,shadow=false
+    ]{block title illustration}%
+    \raisebox{0.15em}{\usebeamerfont{block title example}#1}%
+  \end{beamercolorbox}%
+  \vspace{-0.4em}%
+  \begin{beamercolorbox}[
+      wd=\textwidth,sep=0.55em,leftskip=0.6em,rightskip=0.6em,
+      rounded=false,shadow=false
+    ]{block body illustration}%
+    \usebeamerfont{block body example}%
+}{%
+  \end{beamercolorbox}%
+  \par\vspace{0.45em}%
+}
+
+\newenvironment{proofblock}[1]{%
+  \par\vspace{0.3em}%
+  \begin{beamercolorbox}[
+      wd=\textwidth,sep=0.35em,leftskip=0.3em,rightskip=0.6em,
+      rounded=false,shadow=false
+    ]{block title proof}%
+    \raisebox{0.15em}{\usebeamerfont{block title example}#1}%
+  \end{beamercolorbox}%
+  \vspace{-0.4em}%
+  \begin{beamercolorbox}[
+      wd=\textwidth,sep=0.55em,leftskip=0.6em,rightskip=0.6em,
+      rounded=false,shadow=false
+    ]{block body proof}%
+    \usebeamerfont{block body example}%
+}{%
+  \end{beamercolorbox}%
+  \par\vspace{0.45em}%
+}
+
+% C++ listings follow the Lecture 2 and Recitation 1 conventions.
+\usepackage{listings}
+\usepackage{textcomp}
+\lstdefinestyle{coursecpp}{
+  language=C++,
+  basicstyle=\ttfamily\fontsize{9.2}{10.5}\selectfont,
+  keywordstyle=\color{blue},
+  commentstyle=\color{MatrixGreen},
+  stringstyle=\color{Crimson},
+  showstringspaces=false,
+  columns=fullflexible,
+  keepspaces=true,
+  tabsize=4,
+  breaklines=false,
+  frame=none,
+  aboveskip=0.25em,
+  belowskip=0.25em,
+  upquote=true
+}
+\lstdefinestyle{solutioncpp}{
+  style=coursecpp,
+  basicstyle=\ttfamily\fontsize{8.3}{9.4}\selectfont
+}
+\lstdefinestyle{tinycpp}{
+  style=coursecpp,
+  basicstyle=\ttfamily\fontsize{7.7}{8.7}\selectfont
+}
+\lstset{style=coursecpp}
+\setbeamercovered{invisible}
+\setlength{\parskip}{0.1em}
+
+\newcommand{\problemmeta}[2]{%
+ {\color{BootcampBlue}\small\textbf{GUIDED CODE}\quad #1\hfill #2}\par\smallskip\small}
+\newcommand{\solutioninfo}[1]{%
+ {\color{MatrixGreen!75!black}\textbf{#1 -- Solution}}\par\smallskip}
+\newcommand{\explain}[2]{%
+ {\color{BootcampBlueDark}\textbf{#1}}\par #2\par\medskip}
+
+\setbeamertemplate{frame footer}{\scriptsize FRE6883 | Recitation 2 | Structured Programming and CRR}
+\title{Structured Programming and CRR Code Lab}
+\author{}
+\date{}
+
+% 35 frames, planned for approximately 100 minutes.
+% Source baseline: Lecture 2, Topic 2, pp. 7--37.
+% Visual and exercise conventions: Recitation 1, Decks 1 and 5.
+% Model: gross factors, S0 > 0, 0 < D < R < U, European call.
+% Technical correction: no-arbitrage rejection uses R <= D || R >= U.
+% Standard C++ correction: fixed capacity replaces Lecture 2's VLA Price[N+1].
+\begin{document}
+
+% FRAME 1 -- 1 minute
+\begin{frame}[plain]
+\vfill
+{\usebeamerfont{title}\inserttitle\par}
+\medskip
+{\color{BootcampBlueDark}\rule{0.95\textwidth}{0.8pt}}
+\bigskip
+{\Large FRE6883 -- Recitation 2\par}
+\medskip
+Complete it, trace it, test it, explain it
+\vfill
+\end{frame}
+
+% FRAME 2 -- 2 minutes
+\begin{frame}{Today we rebuild one pricer from small testable pieces}
+\begin{columns}[c,onlytextwidth]
+\begin{column}{0.45\textwidth}
+\centering
+Model data $S_0,U,D,R,N,K$\par
+$\downarrow$\par
+Stock-price nodes\par
+$\downarrow$\par
+Terminal payoffs\par
+$\downarrow$\par
+Backward induction\par
+$\downarrow$\par
+\textbf{Option price $H(0,0)$}
+\end{column}
+\begin{column}{0.51\textwidth}
+\begin{propositionblock}{Your job on every activity}
+Predict the missing operation, complete the code, trace one example, and name one test that could expose a bug.
+\end{propositionblock}
+\medskip
+The goal is not to memorize the final function. It is to make every line explainable.
+\end{column}
+\end{columns}
+\end{frame}
+
+% FRAME 3 -- 3 minutes
+\begin{frame}[fragile]{Three control structures are enough to express the algorithm}
+\begin{columns}[T,onlytextwidth]
+\begin{column}{0.31\textwidth}
+\begin{definitionblock}{Sequence}
+\begin{lstlisting}[basicstyle=\ttfamily\fontsize{8}{9}\selectfont]
+read inputs;
+compute node;
+print result;
+\end{lstlisting}
+One statement follows another.
+\end{definitionblock}
+\end{column}
+\begin{column}{0.31\textwidth}
+\begin{definitionblock}{Condition}
+\begin{lstlisting}[basicstyle=\ttfamily\fontsize{8}{9}\selectfont]
+if (invalid)
+{
+    return -1;
+}
+\end{lstlisting}
+The data decides the path.
+\end{definitionblock}
+\end{column}
+\begin{column}{0.34\textwidth}
+\begin{definitionblock}{Iteration}
+\begin{lstlisting}[basicstyle=\ttfamily\fontsize{8}{9}\selectfont]
+for (int i = 0;
+     i <= n; ++i)
+{
+    visit(i);
+}
+\end{lstlisting}
+The loop repeats one rule.
+\end{definitionblock}
+\end{column}
+\end{columns}
+\medskip
+\textbf{Warm-up:} point to one of each structure in the CRR procedure.
+\end{frame}
+
+% FRAME 4 -- Activity 1 problem
+\begin{frame}[fragile]{01 | Compute one stock-price node -- Problem}
+\problemmeta{Formula to function}{Complete together}
+At step $n$ and node $i$,
+\[
+S(n,i)=S_0U^iD^{\,n-i}, \qquad 0\leq i\leq n.
+\]
+\begin{lstlisting}
+double CalculateAssetPrice(
+    double S0, double U, double D, int n, int i)
+{
+    return /* complete the expression */;
+}
+\end{lstlisting}
+\begin{definitionblock}{Hand check}
+$S_0=106$, $U=1.15125$, $D=0.86862$, $n=3$, $i=2$ should give approximately $122.03$.
+\end{definitionblock}
+{\small\color{BootcampBlueDark}\textbf{Think first:} Which exponent counts up moves? Which counts down moves?}
+\end{frame}
+
+% FRAME 5 -- Activity 1 solution
+\begin{frame}[fragile]{01 | Compute one stock-price node -- Solution}
+\begin{columns}[T,onlytextwidth]
+\begin{column}{0.62\textwidth}
+\begin{lstlisting}[style=solutioncpp]
+double CalculateAssetPrice(
+    double S0, double U, double D, int n, int i)
+{
+    return S0 * std::pow(U, i)
+              * std::pow(D, n - i);
+}
+\end{lstlisting}
+\end{column}
+\begin{column}{0.35\textwidth}
+\small
+\explain{The idea}{$i$ counts up moves; $n-i$ counts down moves. Their sum is always $n$.}
+\explain{Boundary nodes}{$i=0$ gives $S_0D^n$; $i=n$ gives $S_0U^n$.}
+\explain{Required header}{\texttt{std::pow} is declared in \texttt{<cmath>}.}
+\end{column}
+\end{columns}
+\end{frame}
+
+% FRAME 6 -- Activity 2 problem
+\begin{frame}[fragile]{02 | Visit every node exactly once -- Problem}
+\problemmeta{Nested loops}{Complete the bounds}
+For $N=3$, the valid node pairs are
+\[
+(0,0);\ (1,0),(1,1);\ (2,0),(2,1),(2,2);\ (3,0),(3,1),(3,2),(3,3).
+\]
+\begin{lstlisting}
+for (int n = /* start */; n /* condition */ N; ++n)
+{
+    for (int i = /* start */; i /* condition */ n; ++i)
+    {
+        std::cout << CalculateAssetPrice(
+            S0, U, D, n, i) << std::endl;
+    }
+}
+\end{lstlisting}
+{\small\color{BootcampBlueDark}\textbf{Think first:} How many nodes should the code print when $N=3$?}
+\end{frame}
+
+% FRAME 7 -- Activity 2 solution
+\begin{frame}[fragile]{02 | Visit every node exactly once -- Solution}
+\begin{columns}[T,onlytextwidth]
+\begin{column}{0.58\textwidth}
+\begin{lstlisting}[style=solutioncpp]
+for (int n = 0; n <= N; ++n)
+{
+    for (int i = 0; i <= n; ++i)
+    {
+        std::cout << CalculateAssetPrice(
+            S0, U, D, n, i) << std::endl;
+    }
+}
+\end{lstlisting}
+\end{column}
+\begin{column}{0.38\textwidth}
+\small
+\explain{Outer loop}{Selects one time step from $0$ through $N$.}
+\explain{Inner loop}{Visits its $n+1$ valid nodes, from $0$ through $n$.}
+\explain{Node count}{$1+2+3+4=10$ when $N=3$; in general $(N+1)(N+2)/2$.}
+\end{column}
+\end{columns}
+\end{frame}
+
+% FRAME 8 -- Activity 3 problem
+\begin{frame}[fragile]{03 | Store the visited nodes in one array -- Problem}
+\problemmeta{Array + running index}{Complete three blanks}
+\begin{lstlisting}[style=solutioncpp]
+const int MAX_N = 8;
+const int SIZE = (MAX_N + 1) * (MAX_N + 2) / 2;
+double prices[SIZE] = { 0.0 };
+
+int index = /* ? */;
+for (int n = 0; n <= MAX_N; ++n)
+{
+    for (int i = 0; i <= n; ++i)
+    {
+        prices[index] = CalculateAssetPrice(
+            S0, U, D, n, i);
+        /* advance index */;
+    }
+}
+\end{lstlisting}
+{\small\color{BootcampBlueDark}\textbf{Think first:} What is the first valid array index? What is the last?}
+\end{frame}
+
+% FRAME 9 -- Activity 3 solution
+\begin{frame}[fragile]{03 | Store the visited nodes in one array -- Solution}
+\begin{columns}[T,onlytextwidth]
+\begin{column}{0.60\textwidth}
+\begin{lstlisting}[style=solutioncpp]
+const int MAX_N = 8;
+const int SIZE = (MAX_N + 1)
+               * (MAX_N + 2) / 2;
+double prices[SIZE] = { 0.0 };
+
+int index = 0;
+for (int n = 0; n <= MAX_N; ++n)
+{
+    for (int i = 0; i <= n; ++i)
+    {
+        prices[index] = CalculateAssetPrice(
+            S0, U, D, n, i);
+        ++index;
+    }
+}
+\end{lstlisting}
+\end{column}
+\begin{column}{0.37\textwidth}
+\small
+\explain{Capacity}{Steps $0$ through $8$ contain $9\cdot10/2=45$ nodes.}
+\explain{Invariant}{Before each write, \texttt{index} identifies the next free slot.}
+\explain{Safety}{The final write uses index $44$; then \texttt{index} becomes $45$.}
+\end{column}
+\end{columns}
+\end{frame}
+
+% FRAME 10 -- checkpoint
+\begin{frame}{A loop generates nodes; an array remembers them}
+\begin{columns}[c,onlytextwidth]
+\begin{column}{0.47\textwidth}
+\begin{definitionblock}{Computation}
+\texttt{CalculateAssetPrice} translates one mathematical rule into one reusable operation.
+\end{definitionblock}
+\begin{definitionblock}{Traversal}
+The nested loops generate every valid pair $(n,i)$.
+\end{definitionblock}
+\end{column}
+\begin{column}{0.49\textwidth}
+\begin{definitionblock}{Storage}
+The array preserves results after the loop moves to the next node.
+\end{definitionblock}
+\begin{illustrationblock}{Check the design}
+Can we read \texttt{prices[SIZE]}? Why or why not?
+\end{illustrationblock}
+\end{column}
+\end{columns}
+\end{frame}
+
+% FRAME 11 -- Activity 4 problem
+\begin{frame}[fragile]{04 | Reject invalid model data -- Problem}
+\problemmeta{Conditions + early return}{Complete the no-arbitrage test}
+{\small Valid data must satisfy $S_0>0$ and $0<D<R<U$.\par}
+\begin{lstlisting}[style=solutioncpp]
+int ValidateInputData(
+    const double& S0, const double& U,
+    const double& D, const double& R)
+{
+    if (S0 <= 0.0 || D <= 0.0 || U <= D)
+    {
+        return -1;
+    }
+    if (/* reject R outside (D,U) */)
+    {
+        return -1;
+    }
+    return 0;
+}
+\end{lstlisting}
+{\small\color{BootcampBlueDark}\textbf{Test:} should $D=0.9$, $R=0.9$, $U=1.1$ pass?}
+\end{frame}
+
+% FRAME 12 -- Activity 4 solution
+\begin{frame}[fragile]{04 | Reject invalid model data -- Solution}
+\begin{columns}[T,onlytextwidth]
+\begin{column}{0.62\textwidth}
+\begin{lstlisting}[style=solutioncpp]
+int ValidateInputData(
+    const double& S0, const double& U,
+    const double& D, const double& R)
+{
+    if (S0 <= 0.0 || D <= 0.0 || U <= D)
+    {
+        return -1;
+    }
+    if (R <= D || R >= U)
+    {
+        return -1;
+    }
+    return 0;
+}
+\end{lstlisting}
+\end{column}
+\begin{column}{0.35\textwidth}
+\small
+\explain{Boundary matters}{Equality creates an invalid boundary; use \texttt{<=} and \texttt{>=}.}
+\explain{Useful test}{With $D=R=0.9$, the function returns \texttt{-1}.}
+\explain{Why early return}{Invalid inputs cannot reach the pricing calculation.}
+\end{column}
+\end{columns}
+\end{frame}
+
+% FRAME 13 -- function architecture bridge
+\begin{frame}[fragile]{Functions give each financial rule one clear home}
+\begin{columns}[T,onlytextwidth]
+\begin{column}{0.48\textwidth}
+\begin{definitionblock}{BinomialTreeModel.h}
+\begin{lstlisting}[basicstyle=\ttfamily\fontsize{7.8}{8.8}\selectfont]
+#pragma once
+namespace fre {
+double RiskNeutProb(
+    double U, double D, double R);
+double CalculateAssetPrice(
+    double S0, double U, double D,
+    int n, int i);
+}
+\end{lstlisting}
+Declarations tell other files what exists.
+\end{definitionblock}
+\end{column}
+\begin{column}{0.48\textwidth}
+\begin{definitionblock}{BinomialTreeModel.cpp}
+\begin{lstlisting}[basicstyle=\ttfamily\fontsize{7.8}{8.8}\selectfont]
+#include "BinomialTreeModel.h"
+namespace fre {
+// definitions belong here
+}
+\end{lstlisting}
+Definitions contain the executable rules.
+\end{definitionblock}
+\end{column}
+\end{columns}
+\medskip
+\textbf{Design question:} which file should include \texttt{<cmath>}?
+\end{frame}
+
+% FRAME 14 -- Activity 5 problem
+\begin{frame}[fragile]{05 | Implement the risk-neutral weight -- Problem}
+\problemmeta{Small pure function}{Complete and hand-check}
+\[
+q=\frac{R-D}{U-D}.
+\]
+\begin{lstlisting}[style=solutioncpp]
+namespace fre {
+
+double RiskNeutProb(double U, double D, double R)
+{
+    return /* ? */;
+}
+
+}
+\end{lstlisting}
+\begin{definitionblock}{Hand check}
+For $U=1.2$, $D=0.8$, $R=1.1$, the result should be $0.75$.
+\end{definitionblock}
+{\small\color{BootcampBlueDark}\textbf{Think first:} Which validation condition guarantees that $0<q<1$?}
+\end{frame}
+
+% FRAME 15 -- Activity 5 solution
+\begin{frame}[fragile]{05 | Implement the risk-neutral weight -- Solution}
+\begin{columns}[T,onlytextwidth]
+\begin{column}{0.57\textwidth}
+\begin{lstlisting}[style=solutioncpp]
+namespace fre {
+
+double RiskNeutProb(double U, double D, double R)
+{
+    return (R - D) / (U - D);
+}
+
+}
+\end{lstlisting}
+\end{column}
+\begin{column}{0.40\textwidth}
+\small
+\explain{Parentheses}{They preserve the numerator and denominator from the formula.}
+\explain{Test value}{$q=(1.1-0.8)/(1.2-0.8)=0.75$.}
+\explain{Precondition}{$D<R<U$ places $R-D$ strictly between $0$ and $U-D$.}
+\end{column}
+\end{columns}
+\end{frame}
+
+% FRAME 16 -- Activity 6 problem
+\begin{frame}[fragile]{06 | Predict value and reference effects -- Problem}
+\problemmeta{Trace before running}{Fill the final output}
+\begin{lstlisting}[style=solutioncpp]
+void Foo(int a, int& b)
+{
+    ++a;
+    ++b;
+    std::cout << a << " " << b << std::endl;
+}
+
+int main()
+{
+    int x = 1, y = 1;
+    Foo(x, y);
+    std::cout << x << " " << y << std::endl;
+}
+\end{lstlisting}
+\begin{definitionblock}{Complete the trace}
+Inside \texttt{Foo}: \texttt{\_\_ \_\_}\qquad Back in \texttt{main}: \texttt{\_\_ \_\_}
+\end{definitionblock}
+\end{frame}
+
+% FRAME 17 -- Activity 6 solution
+\begin{frame}[fragile]{06 | Predict value and reference effects -- Solution}
+\begin{columns}[c,onlytextwidth]
+\begin{column}{0.46\textwidth}
+\begin{propositionblock}{Observed output}
+Inside \texttt{Foo}: \texttt{2 2}\par\medskip
+Back in \texttt{main}: \texttt{1 2}
+\end{propositionblock}
+\end{column}
+\begin{column}{0.50\textwidth}
+\small
+\explain{\texttt{int a}}{The function receives a copy of \texttt{x}. Incrementing the copy does not change \texttt{x}.}
+\explain{\texttt{int\& b}}{The function receives an alias for \texttt{y}. Incrementing \texttt{b} changes \texttt{y}.}
+\explain{\texttt{const int\& b}}{The alias could be read but not incremented; \texttt{++b} would fail to compile.}
+\end{column}
+\end{columns}
+\end{frame}
+
+% FRAME 18 -- Activity 7 problem
+\begin{frame}[fragile]{07 | Return four inputs through references -- Problem}
+\problemmeta{Output parameters}{Complete the reads and success code}
+\begin{lstlisting}[style=solutioncpp]
+int GetInputData(
+    double& S0, double& U, double& D, double& R)
+{
+    std::cout << "Enter S0 U D R: ";
+    std::cin >> /* four output parameters */;
+
+    if (ValidateInputData(S0, U, D, R) == -1)
+    {
+        return /* failure */;
+    }
+    return /* success */;
+}
+\end{lstlisting}
+\begin{definitionblock}{Call site}
+\texttt{double s0=0.0, u=0.0, d=0.0, r=0.0;}\par
+\texttt{int status = fre::GetInputData(s0, u, d, r);}
+\end{definitionblock}
+\end{frame}
+
+% FRAME 19 -- Activity 7 solution
+\begin{frame}[fragile]{07 | Return four inputs through references -- Solution}
+\begin{columns}[T,onlytextwidth]
+\begin{column}{0.62\textwidth}
+\begin{lstlisting}[style=solutioncpp]
+int GetInputData(
+    double& S0, double& U, double& D, double& R)
+{
+    std::cout << "Enter S0 U D R: ";
+    std::cin >> S0 >> U >> D >> R;
+
+    if (ValidateInputData(S0, U, D, R) == -1)
+    {
+        return -1;
+    }
+    return 0;
+}
+\end{lstlisting}
+\end{column}
+\begin{column}{0.35\textwidth}
+\small
+\explain{Why references}{One function call updates four variables owned by the caller.}
+\explain{Meaningful status}{\texttt{0} means success; \texttt{-1} means invalid model data.}
+\explain{Caller responsibility}{Check the status before attempting any pricing.}
+\end{column}
+\end{columns}
+\end{frame}
+
+% FRAME 20 -- checkpoint
+\begin{frame}{The interfaces now describe the data flow}
+\begin{columns}[c,onlytextwidth]
+\begin{column}{0.47\textwidth}
+\begin{definitionblock}{Read or compute}
+\texttt{GetInputData} changes caller variables.\par
+\texttt{CalculateAssetPrice} returns one computed value.\par
+\texttt{RiskNeutProb} returns one computed value.
+\end{definitionblock}
+\end{column}
+\begin{column}{0.49\textwidth}
+\begin{definitionblock}{Protect the calculation}
+\texttt{ValidateInputData} checks model invariants before a denominator, probability, or tree is constructed.
+\end{definitionblock}
+\begin{illustrationblock}{Say it aloud}
+Which functions need references, and which do not?
+\end{illustrationblock}
+\end{column}
+\end{columns}
+\end{frame}
+
+% FRAME 21 -- Activity 8 problem
+\begin{frame}[fragile]{08 | Implement a European call payoff -- Problem}
+\problemmeta{Conditional rule}{Complete the function}
+\[
+h(z)=(z-K)^+=\max(z-K,0).
+\]
+\begin{lstlisting}[style=solutioncpp]
+double CallPayoff(double z, double K)
+{
+    if (/* in the money */)
+    {
+        return /* positive payoff */;
+    }
+    return /* otherwise */;
+}
+\end{lstlisting}
+\begin{definitionblock}{Acceptance cases for $K=100$}
+$z=80\to0$, \qquad $z=100\to0$, \qquad $z=120\to20$.
+\end{definitionblock}
+{\small\color{BootcampBlueDark}\textbf{Boundary question:} Should the condition use \texttt{>} or \texttt{>=}?}
+\end{frame}
+
+% FRAME 22 -- Activity 8 solution
+\begin{frame}[fragile]{08 | Implement a European call payoff -- Solution}
+\begin{columns}[T,onlytextwidth]
+\begin{column}{0.57\textwidth}
+\begin{lstlisting}[style=solutioncpp]
+double CallPayoff(double z, double K)
+{
+    if (z > K)
+    {
+        return z - K;
+    }
+    return 0.0;
+}
+\end{lstlisting}
+\end{column}
+\begin{column}{0.40\textwidth}
+\small
+\explain{At the strike}{$z-K=0$, so both \texttt{>} and \texttt{>=} return zero. \texttt{>} states ``positive payoff'' directly.}
+\explain{One responsibility}{The function knows the payoff rule, not how stock prices are generated.}
+\explain{Easy to test}{No array or loop is required to verify the three cases.}
+\end{column}
+\end{columns}
+\end{frame}
+
+% FRAME 23 -- Activity 9 problem
+\begin{frame}[fragile]{09 | Build the terminal payoff row -- Problem}
+\problemmeta{Loop + two function calls}{Complete the row}
+At expiry $N$, each array entry is $H(N,i)=h(S(N,i))$.
+\begin{lstlisting}
+double Price[SIZE] = { 0.0 };
+
+for (int i = /* first node */; i /* last node */ N; ++i)
+{
+    double stock = /* compute S(N,i) */;
+    Price[i] = /* apply the payoff */;
+}
+\end{lstlisting}
+\begin{definitionblock}{Trace this case}
+$S_0=100$, $U=1.2$, $D=0.8$, $K=100$, $N=2$.\par
+Complete the stock row $[\_\_,\_\_,\_\_]$ and payoff row $[\_\_,\_\_,\_\_]$.
+\end{definitionblock}
+\end{frame}
+
+% FRAME 24 -- Activity 9 solution
+\begin{frame}[fragile]{09 | Build the terminal payoff row -- Solution}
+\begin{columns}[T,onlytextwidth]
+\begin{column}{0.62\textwidth}
+\begin{lstlisting}[style=solutioncpp]
+double Price[SIZE] = { 0.0 };
+
+for (int i = 0; i <= N; ++i)
+{
+    double stock = CalculateAssetPrice(
+        S0, U, D, N, i);
+    Price[i] = CallPayoff(stock, K);
+}
+\end{lstlisting}
+\end{column}
+\begin{column}{0.35\textwidth}
+\small
+\explain{Stock row}{$[64,96,144]$ for $i=0,1,2$.}
+\explain{Payoff row}{$[0,0,44]$ for a call struck at $100$.}
+\explain{Invariant}{After the loop, indices $0$ through $N$ hold the complete expiry row.}
+\end{column}
+\end{columns}
+\end{frame}
+
+% FRAME 25 -- trace
+\begin{frame}{Backward induction shrinks one row at a time}
+For $q=0.75$ and $R=1.1$, begin with the terminal row $[0,0,44]$.
+\begin{center}
+\renewcommand{\arraystretch}{1.35}
+\begin{tabular}{ccl}
+\toprule
+Step & Active values & Update rule \\
+\midrule
+$n=2$ & $[0,0,44]$ & terminal call payoffs \\
+$n=1$ & $[0,30]$ & $H(1,i)=\frac{0.75H(2,i+1)+0.25H(2,i)}{1.1}$ \\
+$n=0$ & $[20.4545]$ & same local rule \\
+\bottomrule
+\end{tabular}
+\end{center}
+\begin{propositionblock}{Why one array is enough}
+After computing row $n$, the old row $n+1$ is never needed again. We overwrite it from left to right.
+\end{propositionblock}
+\end{frame}
+
+% FRAME 26 -- Activity 10 problem
+\begin{frame}[fragile]{10 | Complete backward induction -- Problem}
+\problemmeta{Two loops + in-place update}{Complete four blanks}
+\begin{lstlisting}
+for (int n = /* first backward step */;
+     n /* continue through root */ 0; --n)
+{
+    for (int i = 0; i /* nodes on row n */ n; ++i)
+    {
+        Price[i] =
+            (q * /* up child */
+             + (1.0 - q) * /* down child */) / R;
+    }
+}
+return Price[0];
+\end{lstlisting}
+\begin{definitionblock}{Index map}
+At node $(n,i)$, the down child is \texttt{Price[i]} and the up child is \texttt{Price[i+1]}.
+\end{definitionblock}
+\end{frame}
+
+% FRAME 27 -- Activity 10 solution
+\begin{frame}[fragile]{10 | Complete backward induction -- Solution}
+\begin{columns}[T,onlytextwidth]
+\begin{column}{0.61\textwidth}
+\begin{lstlisting}[style=solutioncpp]
+for (int n = N - 1; n >= 0; --n)
+{
+    for (int i = 0; i <= n; ++i)
+    {
+        Price[i] =
+            (q * Price[i + 1]
+             + (1.0 - q) * Price[i]) / R;
+    }
+}
+return Price[0];
+\end{lstlisting}
+\end{column}
+\begin{column}{0.36\textwidth}
+\small
+\explain{Outer loop}{Expiry is already known, so begin at $N-1$ and finish at the root.}
+\explain{Inner loop}{Row $n$ contains indices $0$ through $n$.}
+\explain{Final state}{After $n=0$, \texttt{Price[0]} is $H(0,0)$.}
+\end{column}
+\end{columns}
+\end{frame}
+
+% FRAME 28 -- Activity 11 problem
+\begin{frame}[fragile]{11 | Find the overwrite bug -- Problem}
+\problemmeta{Data dependency}{The formulas are right; the result is wrong}
+\begin{lstlisting}
+for (int n = N - 1; n >= 0; --n)
+{
+    for (int i = n; i >= 0; --i)
+    {
+        Price[i] =
+            (q * Price[i + 1]
+             + (1.0 - q) * Price[i]) / R;
+    }
+}
+\end{lstlisting}
+\begin{definitionblock}{Trace only row $n=1$}
+Start from \texttt{Price = [0, 0, 44]}. Which entry is overwritten first? Which later calculation reads that changed entry as if it were still a child?
+\end{definitionblock}
+{\small\color{BootcampBlueDark}\textbf{Repair:} Change only the inner-loop header.}
+\end{frame}
+
+% FRAME 29 -- Activity 11 solution
+\begin{frame}[fragile]{11 | Find the overwrite bug -- Solution}
+\begin{columns}[T,onlytextwidth]
+\begin{column}{0.56\textwidth}
+\begin{lstlisting}[style=solutioncpp]
+for (int n = N - 1; n >= 0; --n)
+{
+    for (int i = 0; i <= n; ++i)
+    {
+        Price[i] =
+            (q * Price[i + 1]
+             + (1.0 - q) * Price[i]) / R;
+    }
+}
+\end{lstlisting}
+\end{column}
+\begin{column}{0.41\textwidth}
+\small
+\explain{What went wrong}{With decreasing \texttt{i}, \texttt{Price[1]} changes before node $(1,0)$ reads it as its up child.}
+\explain{Why increasing works}{Updating \texttt{Price[0]} cannot damage \texttt{Price[1]}, which is still needed next.}
+\explain{General lesson}{When overwriting an array, loop direction is part of correctness.}
+\end{column}
+\end{columns}
+\end{frame}
+
+% FRAME 30 -- Activity 12 problem A
+\begin{frame}[fragile]{12 | Assemble PriceByCRR -- Problem A}
+\problemmeta{Guard + initialization}{Complete the preconditions}
+\begin{lstlisting}[style=tinycpp]
+double PriceByCRR(double S0, double U, double D,
+                  double R, const int N, double K)
+{
+    const int SIZE = 9;
+    if (N < 1 || N >= SIZE || S0 <= 0.0 || K < 0.0
+        || /* require 0 < D < R < U */)
+    {
+        std::cerr << "Invalid model data" << std::endl;
+        return -1.0;
+    }
+
+    double q = /* helper call */;
+    double Price[SIZE] = { 0.0 };
+    // Next: construct the terminal row.
+\end{lstlisting}
+\begin{definitionblock}{Design check}
+Why does \texttt{SIZE = 9} allow $N=8$ but reject $N=9$?
+\end{definitionblock}
+\end{frame}
+
+% FRAME 31 -- Activity 12 problem B
+\begin{frame}[fragile]{12 | Assemble PriceByCRR -- Problem B}
+\problemmeta{Terminal row + backward pass}{Connect the completed pieces}
+\begin{lstlisting}[style=tinycpp]
+    for (int i = 0; i <= N; ++i)
+    {
+        Price[i] = /* payoff at S(N,i) */;
+    }
+
+    for (int n = /* ? */; n >= 0; --n)
+    {
+        for (int i = 0; i <= n; ++i)
+        {
+            Price[i] = /* one CRR update */;
+        }
+    }
+    return /* root value */;
+}
+\end{lstlisting}
+\begin{definitionblock}{Before the reveal}
+Point to the base case, the recurrence, and the final answer in this function.
+\end{definitionblock}
+\end{frame}
+
+% FRAME 32 -- Activity 12 solution A
+\begin{frame}[fragile]{12 | Assemble PriceByCRR -- Solution A}
+\begin{lstlisting}[style=tinycpp]
+double PriceByCRR(double S0, double U, double D,
+                  double R, const int N, double K)
+{
+    const int SIZE = 9;
+    if (N < 1 || N >= SIZE || S0 <= 0.0 || K < 0.0
+        || D <= 0.0 || U <= D || R <= D || R >= U)
+    {
+        std::cerr << "Invalid model data" << std::endl;
+        return -1.0;
+    }
+
+    double q = RiskNeutProb(U, D, R);
+    double Price[SIZE] = { 0.0 };
+    for (int i = 0; i <= N; ++i)
+    {
+        Price[i] = CallPayoff(
+            CalculateAssetPrice(S0, U, D, N, i), K);
+    }
+\end{lstlisting}
+{\small The validation establishes safe ranges; the terminal loop establishes the base case.}
+\end{frame}
+
+% FRAME 33 -- Activity 12 solution B
+\begin{frame}[fragile]{12 | Assemble PriceByCRR -- Solution B}
+\begin{lstlisting}[style=tinycpp]
+    for (int n = N - 1; n >= 0; --n)
+    {
+        for (int i = 0; i <= n; ++i)
+        {
+            Price[i] =
+                (q * Price[i + 1]
+                 + (1.0 - q) * Price[i]) / R;
+        }
+    }
+    return Price[0];
+}
+\end{lstlisting}
+\begin{columns}[T,onlytextwidth]
+\begin{column}{0.48\textwidth}
+\begin{propositionblock}{Shared example}
+$N=2$ returns approximately $20.4545$ for $S_0=100$, $U=1.2$, $D=0.8$, $R=1.1$, $K=100$.
+\end{propositionblock}
+\end{column}
+\begin{column}{0.48\textwidth}
+\begin{illustrationblock}{Explain the memory}
+At any moment, the active prefix of \texttt{Price} represents one complete time level.
+\end{illustrationblock}
+\end{column}
+\end{columns}
+\end{frame}
+
+% FRAME 34 -- tests
+\begin{frame}{Tests should target boundaries and invariants}
+\scriptsize
+\begin{center}
+\renewcommand{\arraystretch}{1.18}
+\begin{tabular}{@{}p{1.55cm}p{4.15cm}p{2.55cm}p{2.75cm}@{}}
+\toprule
+Case & Change & Expected observation & Bug targeted \\
+\midrule
+Baseline & $S_0=100,U=1.2,D=.8,R=1.1,K=100,N=2$ & $20.4545$ & full data flow \\
+At strike & call payoff $z=K=100$ & $0$ & payoff boundary \\
+No-arbitrage edge & $R=D$ & rejected & wrong inequality \\
+Capacity edge & $N=9$ with \texttt{SIZE=9} & rejected & out-of-bounds write \\
+Zero strike & set $K=0$ & equal to $S_0$ & discount/update error \\
+\bottomrule
+\end{tabular}
+\end{center}
+\begin{propositionblock}{A useful explanation has three parts}
+{\small State the input, predict the result or invariant, then identify the line that would be suspect if the test failed.}
+\end{propositionblock}
+\end{frame}
+
+% FRAME 35 -- close
+\begin{frame}{One algorithm now has a line-by-line explanation}
+\begin{columns}[c,onlytextwidth]
+\begin{column}{0.46\textwidth}
+\centering
+Validate inputs\par
+$\downarrow$\par
+Compute $q$\par
+$\downarrow$\par
+Build terminal payoffs\par
+$\downarrow$\par
+Move backward in place\par
+$\downarrow$\par
+Return \texttt{Price[0]}
+\end{column}
+\begin{column}{0.50\textwidth}
+\begin{propositionblock}{Exit ticket}
+\begin{enumerate}
+\item Why must $R$ lie strictly between $D$ and $U$?
+\item Why does the inner CRR loop move from left to right?
+\item Which function would you test first after changing the payoff from call to put?
+\end{enumerate}
+\end{propositionblock}
+\medskip
+If you can answer all three, you can debug the pricer rather than merely rerun it.
+\end{column}
+\end{columns}
+\end{frame}
+
+\end{document}
