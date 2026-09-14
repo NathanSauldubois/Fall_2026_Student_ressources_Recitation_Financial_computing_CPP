@@ -1,0 +1,409 @@
+% !TEX program = pdflatex
+% FRE6883 Recitation 1 -- Opening and diagnostic
+\documentclass[10pt,aspectratio=169]{beamer}
+
+% Language & encoding
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[english]{babel}
+\usepackage{lmodern}
+\usepackage{microtype}
+
+% Math / tables / layout
+\usepackage{amsmath,amssymb,bm,mathtools}
+\usepackage{booktabs}
+\usepackage{multicol}
+\usepackage{changepage}
+
+% Graphics
+\usepackage{graphicx}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,calc,decorations.pathreplacing}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+
+% Theme (Metropolis)
+\usetheme[numbering=fraction,progressbar=frametitle]{metropolis}
+\setbeamertemplate{frame numbering}[fraction]
+\setbeamertemplate{navigation symbols}{}
+
+% Bootcamp palette
+\definecolor{BootcampBlueDark}{HTML}{1A3C68}
+\definecolor{BootcampBlue}{RGB}{31,110,178}
+\definecolor{AccentGold}{HTML}{DAA520}
+\definecolor{SoftGray}{RGB}{245,246,248}
+\definecolor{TextBlack}{HTML}{000000}
+\definecolor{Crimson}{HTML}{990000}
+\definecolor{MatrixGreen}{HTML}{228B22}
+\definecolor{MatrixRed}{HTML}{B22222}
+
+% Global formatting
+\setbeamercolor{normal text}{fg=TextBlack,bg=white}
+\setbeamercolor{title}{fg=TextBlack}
+\setbeamercolor{structure}{fg=BootcampBlueDark}
+\setbeamercolor{progress bar}{fg=BootcampBlueDark,bg=gray!30}
+
+\setbeamercolor{frametitle}{bg=BootcampBlueDark,fg=white}
+\setbeamerfont{frametitle}{series=\bfseries,size=\large}
+\setbeamertemplate{frametitle}{
+  \nointerlineskip
+  \begin{beamercolorbox}[wd=\paperwidth,ht=3.2ex,dp=1.4ex,leftskip=1em,rightskip=1em]{frametitle}
+    \usebeamerfont{frametitle}\insertframetitle
+  \end{beamercolorbox}
+}
+
+\setbeamercolor{block title example}{bg=BootcampBlueDark!90!black,fg=white}
+\setbeamercolor{block body example}{bg=BootcampBlueDark!5!white,fg=black}
+\setbeamercolor{block title proposition}{bg=MatrixGreen!75!black,fg=white}
+\setbeamercolor{block body proposition}{bg=MatrixGreen!7!white,fg=black}
+\setbeamercolor{block title illustration}{bg=AccentGold!85!black,fg=white}
+\setbeamercolor{block body illustration}{bg=AccentGold!10!white,fg=black}
+\setbeamercolor{block title proof}{bg=gray!70!black,fg=white}
+\setbeamercolor{block body proof}{bg=SoftGray,fg=black}
+\setbeamertemplate{blocks}[rounded][shadow=false]
+
+\newenvironment{definitionblock}[1]{%
+  \par\vspace{0.4em}%
+  \begin{beamercolorbox}[
+      wd=\textwidth,sep=0.4em,leftskip=0.3em,rightskip=0.6em,
+      rounded=false,shadow=false
+    ]{block title example}%
+    \raisebox{0.15em}{\usebeamerfont{block title example}#1}%
+  \end{beamercolorbox}%
+  \vspace{-0.4em}%
+  \begin{beamercolorbox}[
+      wd=\textwidth,sep=0.9em,leftskip=0.6em,rightskip=0.6em,
+      rounded=false,shadow=false
+    ]{block body example}%
+    \usebeamerfont{block body example}%
+}{%
+  \end{beamercolorbox}%
+  \par\vspace{0.6em}%
+}
+
+\newenvironment{propositionblock}[1]{%
+  \par\vspace{0.35em}%
+  \begin{beamercolorbox}[
+      wd=\textwidth,sep=0.4em,leftskip=0.3em,rightskip=0.6em,
+      rounded=false,shadow=false
+    ]{block title proposition}%
+    \raisebox{0.15em}{\usebeamerfont{block title example}#1}%
+  \end{beamercolorbox}%
+  \vspace{-0.4em}%
+  \begin{beamercolorbox}[
+      wd=\textwidth,sep=0.8em,leftskip=0.6em,rightskip=0.6em,
+      rounded=false,shadow=false
+    ]{block body proposition}%
+    \usebeamerfont{block body example}%
+}{%
+  \end{beamercolorbox}%
+  \par\vspace{0.55em}%
+}
+
+\newenvironment{illustrationblock}[1]{%
+  \par\vspace{0.35em}%
+  \begin{beamercolorbox}[
+      wd=\textwidth,sep=0.4em,leftskip=0.3em,rightskip=0.6em,
+      rounded=false,shadow=false
+    ]{block title illustration}%
+    \raisebox{0.15em}{\usebeamerfont{block title example}#1}%
+  \end{beamercolorbox}%
+  \vspace{-0.4em}%
+  \begin{beamercolorbox}[
+      wd=\textwidth,sep=0.8em,leftskip=0.6em,rightskip=0.6em,
+      rounded=false,shadow=false
+    ]{block body illustration}%
+    \usebeamerfont{block body example}%
+}{%
+  \end{beamercolorbox}%
+  \par\vspace{0.55em}%
+}
+
+\newenvironment{proofblock}[1]{%
+  \par\vspace{0.3em}%
+  \begin{beamercolorbox}[
+      wd=\textwidth,sep=0.35em,leftskip=0.3em,rightskip=0.6em,
+      rounded=false,shadow=false
+    ]{block title proof}%
+    \raisebox{0.15em}{\usebeamerfont{block title example}#1}%
+  \end{beamercolorbox}%
+  \vspace{-0.4em}%
+  \begin{beamercolorbox}[
+      wd=\textwidth,sep=0.7em,leftskip=0.6em,rightskip=0.6em,
+      rounded=false,shadow=false
+    ]{block body proof}%
+    \usebeamerfont{block body example}%
+}{%
+  \end{beamercolorbox}%
+  \par\vspace{0.45em}%
+}
+
+
+% Self-contained Deck 0. Theme, palette, and teaching-block macros above
+% are inherited verbatim from the Fall 2026 FRE6233 Lecture 1 source.
+% C++ listings follow the FRE6883 lecture conventions: explicit types,
+% std:: qualification, braces on separate lines, and short // comments.
+\usepackage{listings}
+\lstdefinestyle{coursecpp}{
+  language=C++,
+  basicstyle=\ttfamily\normalsize,
+  keywordstyle=\color{blue},
+  commentstyle=\color{MatrixGreen},
+  stringstyle=\color{Crimson},
+  showstringspaces=false,
+  columns=fullflexible,
+  keepspaces=true,
+  tabsize=4,
+  breaklines=false,
+  frame=none,
+  aboveskip=0.5em,
+  belowskip=0.5em
+}
+\lstset{style=coursecpp}
+\setbeamercovered{invisible}
+
+\title{FRE6883 -- Financial Computation}
+\subtitle{C++ Fundamentals, Binomial Pricing, and Git}
+\author{}
+\date{}
+
+% DELIVERY: 8 frames, 12 PDF pages (four answer overlays), about 14 minutes.
+% Pacing: 0:30 / 1:30 / 2:00 / 2:00 / 2:00 / 2:00 / 2:00 / 2:00.
+% Before each reveal: think silently, vote, invite one explanation, then click.
+% Count "not sure" responses as useful diagnostic information, not errors.
+% ADAPTATION: if roughly one third struggle with copying or the loop, use
+% line-by-line tracing and starter skeletons in Decks 1, 2, and 4. If these
+% are comfortable, spend more time on tests and independent repairs.
+% The reference item diagnoses prior Topic 2 exposure only; it must not
+% become a prerequisite for the rest of today's session. Reveal briefly
+% without a reference tutorial if the notation is unfamiliar to most.
+% Integer-division uncertainty calls for explicit operand-type checks.
+% Keep individual votes before pair discussion so confidence is observable.
+
+\begin{document}
+
+% 1. Welcome (0:30).
+\begin{frame}[plain]
+  \vfill
+  {\usebeamerfont{title}\usebeamercolor[fg]{title}\inserttitle\par}
+  \medskip
+  {\color{BootcampBlueDark}\rule{0.95\textwidth}{0.8pt}}
+  \bigskip
+  {\Large\bfseries Recitation 1\par}
+  \medskip
+  {\large\insertsubtitle\par}
+  \vfill
+\end{frame}
+
+% 2. Purpose (1:30). Welcome different levels of experience explicitly.
+\begin{frame}{What are recitations for?}
+
+\begin{itemize}\setlength{\itemsep}{0.65em}
+    \item \textbf{Complement the lectures} with additional explanations, examples, and practice.
+    
+    \item \textbf{Review the week's material}, focusing on the concepts and techniques introduced in class.
+    
+    \item \textbf{Ask questions} about anything that was unclear or deserves more practice.
+    
+    \item \textbf{Practice together} through exercises, coding examples, and debugging.
+\end{itemize}
+
+\medskip
+
+\begin{illustrationblock}{Come with your questions!}
+Recitations are here to support you throughout the course. 
+Please bring any questions you have from the week's lectures, homework, or coding exercises.
+
+\medskip
+You are also welcome to \textbf{send me your questions in advance} so that I can prepare examples or exercises around them.
+\end{illustrationblock}
+
+\end{frame}
+% 3. Background (2:00). Categories overlap: select all that apply.
+% Also count Topic 2 exposure separately from general programming experience.
+\begin{frame}{What is your programming background?}
+  \textbf{Tell me which description fits.}
+  \medskip
+  \begin{enumerate}\setlength{\itemsep}{0.25em}
+    \item Never programmed before
+    \item Python / R / Matlab only
+    \item Some C / C++
+    \item Took a full C++ course
+    \item Used C++ in a project or internship
+    \item Comfortable with pointers, references, and classes
+  \end{enumerate}
+
+\end{frame}
+
+% 4. Copy semantics (2:00). Snippet is inside main with <iostream> included.
+\begin{frame}[fragile]{Predict the output: copying a value}
+  \relax
+  {\small Assume \texttt{<iostream>} is included; this code is inside \texttt{main()}.}
+  \medskip
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.57\textwidth}
+\begin{lstlisting}
+int x = 3;
+int y = x;
+y++;
+std::cout << x << " " << y;
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.39\textwidth}
+      \begin{overlayarea}{\linewidth}{4.8cm}
+        \only<1>{
+          \begin{illustrationblock}{Think, then vote}
+            \textbf{A}\quad \texttt{3 3}\par\smallskip
+            \textbf{B}\quad \texttt{3 4}\par\smallskip
+            \textbf{C}\quad \texttt{4 4}\par\smallskip
+            \textbf{D}\quad Not sure
+          \end{illustrationblock}
+          Does changing \texttt{y} change \texttt{x}?
+        }
+        \only<2>{
+          \begin{propositionblock}{Answer B: \texttt{3 4}}
+            \texttt{y} receives a copy of the value in \texttt{x}.\par\medskip
+            \texttt{y++} increases \texttt{y} by one; \texttt{x} stays 3.
+          \end{propositionblock}
+        }
+      \end{overlayarea}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% 5. Loop (2:00). Ask for the actual i values before explaining the bound.
+\begin{frame}[fragile]{Predict the output: a short loop}
+  \relax
+  {\small Assume \texttt{<iostream>} is included; this code is inside \texttt{main()}.}
+  \medskip
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.57\textwidth}
+\begin{lstlisting}
+for (int i = 0; i < 3; i++)
+{
+    std::cout << i << " ";
+}
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.39\textwidth}
+      \begin{overlayarea}{\linewidth}{4.8cm}
+        \only<1>{
+          \begin{illustrationblock}{Think, then vote}
+            \textbf{A}\quad \texttt{0 1 2}\par\smallskip
+            \textbf{B}\quad \texttt{0 1 2 3}\par\smallskip
+            \textbf{C}\quad \texttt{1 2 3}\par\smallskip
+            \textbf{D}\quad Not sure
+          \end{illustrationblock}
+          How many times does the body run?
+        }
+        \only<2>{
+          \begin{propositionblock}{Answer A: \texttt{0 1 2}}
+            The body runs three times.\par\medskip
+            At \texttt{i = 3}, \texttt{i < 3} is false, so the loop stops.
+          \end{propositionblock}
+          {\small A space follows each printed number.}
+        }
+      \end{overlayarea}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% 6. Optional reference diagnostic (2:00). Do not infer beginner failure.
+% Includes are assumed only to keep the complete function/main pair short.
+\begin{frame}[fragile]{What happens? A reference parameter}
+  \relax
+  {\small\textbf{Optional diagnostic:} new notation is welcome. Assume \texttt{<iostream>} is included.}
+  \smallskip
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.57\textwidth}
+\begin{lstlisting}
+void f(int& x)
+{
+    x++;
+}
+int main()
+{
+    int a = 3;
+    f(a);
+    std::cout << a;
+    return 0;
+}
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.39\textwidth}
+      \begin{overlayarea}{\linewidth}{4.8cm}
+        \only<1>{
+          \begin{illustrationblock}{Think, then vote}
+            \textbf{A}\quad Prints \texttt{3}\par\smallskip
+            \textbf{B}\quad Prints \texttt{4}\par\smallskip
+            \textbf{C}\quad Does not compile\par\smallskip
+            \textbf{D}\quad Not sure
+          \end{illustrationblock}
+          Is \texttt{x} a copy of \texttt{a} here?
+        }
+        \only<2>{
+          \begin{propositionblock}{Answer B: prints \texttt{4}}
+            \texttt{int\& x} makes \texttt{x} a reference to \texttt{a}: another name for the same variable.\par\medskip
+            Increasing \texttt{x} changes \texttt{a}.
+          \end{propositionblock}
+        }
+      \end{overlayarea}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% 7. Integer division (2:00). Keep the operands visible during explanation.
+\begin{frame}[fragile]{Predict the output: integer division}
+  \relax
+  {\small Assume \texttt{<iostream>} is included; this code is inside \texttt{main()}.}
+  \medskip
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.57\textwidth}
+\begin{lstlisting}
+int x = 5;
+double y = x / 2;
+std::cout << y;
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.39\textwidth}
+      \begin{overlayarea}{\linewidth}{4.8cm}
+        \only<1>{
+          \begin{illustrationblock}{Think, then vote}
+            \textbf{A}\quad \texttt{2}\par\smallskip
+            \textbf{B}\quad \texttt{2.5}\par\smallskip
+            \textbf{C}\quad Does not compile\par\smallskip
+            \textbf{D}\quad Not sure
+          \end{illustrationblock}
+          Does declaring \texttt{y} as \texttt{double} change the division?
+        }
+        \only<2>{
+          \begin{propositionblock}{Answer A: prints \texttt{2}}
+            Both operands of \texttt{x / 2} are integers: the result is 2.\par\smallskip
+            It is then stored as a \texttt{double}.\par\smallskip
+            Use \texttt{x / 2.0} to obtain 2.5.
+          \end{propositionblock}
+        }
+      \end{overlayarea}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% 8. Transition (2:00). Invite a plain-language answer, not C++ syntax yet.
+% Move into Deck 1 with the scaffolding indicated by the votes above.
+\begin{frame}{From a financial problem to an algorithm}
+  \begin{definitionblock}{A European call at expiry}
+    Given the terminal stock price $z$ and strike $K$,\par
+    compute the payoff: $z-K$ if $z>K$, and zero otherwise.
+  \end{definitionblock}
+  \medskip
+  \textbf{Before writing C++:}
+  \begin{enumerate}\setlength{\itemsep}{0.35em}
+    \item What are the inputs and the output?
+    \item What steps should the program follow?
+    \item Which examples would convince you it works?
+  \end{enumerate}
+  \medskip
+  {\color{BootcampBlueDark}\textbf{Next: describe the steps, then translate them into code.}}
+\end{frame}
+
+\end{document}

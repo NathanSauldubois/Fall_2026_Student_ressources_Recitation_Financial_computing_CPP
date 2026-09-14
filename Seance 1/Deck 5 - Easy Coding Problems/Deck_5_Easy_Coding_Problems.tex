@@ -1,0 +1,677 @@
+% !TEX program = pdflatex
+% FRE6883 Recitation 1 -- Deck 5 -- Easy Coding Problems
+\documentclass[10pt,aspectratio=169]{beamer}
+
+% Language & encoding
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[english]{babel}
+\usepackage{lmodern}
+\usepackage{microtype}
+\DisableLigatures{encoding=*,family=tt*}
+
+% Math / tables / layout
+\usepackage{amsmath,amssymb,bm,mathtools}
+\usepackage{booktabs}
+\usepackage{multicol}
+\usepackage{changepage}
+
+% Graphics
+\usepackage{graphicx}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,calc,decorations.pathreplacing}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+
+% Theme (Metropolis)
+\usetheme[numbering=fraction,progressbar=frametitle]{metropolis}
+\setbeamertemplate{frame numbering}[fraction]
+\setbeamertemplate{navigation symbols}{}
+
+% Bootcamp palette
+\definecolor{BootcampBlueDark}{HTML}{1A3C68}
+\definecolor{BootcampBlue}{RGB}{31,110,178}
+\definecolor{AccentGold}{HTML}{DAA520}
+\definecolor{SoftGray}{RGB}{245,246,248}
+\definecolor{TextBlack}{HTML}{000000}
+\definecolor{Crimson}{HTML}{990000}
+\definecolor{MatrixGreen}{HTML}{228B22}
+\definecolor{MatrixRed}{HTML}{B22222}
+
+% Global formatting
+\setbeamercolor{normal text}{fg=TextBlack,bg=white}
+\setbeamercolor{title}{fg=TextBlack}
+\setbeamercolor{structure}{fg=BootcampBlueDark}
+\setbeamercolor{progress bar}{fg=BootcampBlueDark,bg=gray!30}
+
+\setbeamercolor{frametitle}{bg=BootcampBlueDark,fg=white}
+\setbeamerfont{frametitle}{series=\bfseries,size=\large}
+\setbeamertemplate{frametitle}{
+  \nointerlineskip
+  \begin{beamercolorbox}[wd=\paperwidth,ht=3.2ex,dp=1.4ex,leftskip=1em,rightskip=1em]{frametitle}
+    \usebeamerfont{frametitle}\insertframetitle
+  \end{beamercolorbox}
+}
+
+\setbeamercolor{block title example}{bg=BootcampBlueDark!90!black,fg=white}
+\setbeamercolor{block body example}{bg=BootcampBlueDark!5!white,fg=black}
+\setbeamercolor{block title proposition}{bg=MatrixGreen!75!black,fg=white}
+\setbeamercolor{block body proposition}{bg=MatrixGreen!7!white,fg=black}
+\setbeamercolor{block title illustration}{bg=AccentGold!85!black,fg=white}
+\setbeamercolor{block body illustration}{bg=AccentGold!10!white,fg=black}
+\setbeamercolor{block title proof}{bg=gray!70!black,fg=white}
+\setbeamercolor{block body proof}{bg=SoftGray,fg=black}
+\setbeamertemplate{blocks}[rounded][shadow=false]
+
+\newenvironment{definitionblock}[1]{%
+  \par\vspace{0.4em}%
+  \begin{beamercolorbox}[
+      wd=\textwidth,sep=0.4em,leftskip=0.3em,rightskip=0.6em,
+      rounded=false,shadow=false
+    ]{block title example}%
+    \raisebox{0.15em}{\usebeamerfont{block title example}#1}%
+  \end{beamercolorbox}%
+  \vspace{-0.4em}%
+  \begin{beamercolorbox}[
+      wd=\textwidth,sep=0.5em,leftskip=0.6em,rightskip=0.6em,
+      rounded=false,shadow=false
+    ]{block body example}%
+    \usebeamerfont{block body example}%
+}{%
+  \end{beamercolorbox}%
+  \par\vspace{0.6em}%
+}
+
+\newenvironment{propositionblock}[1]{%
+  \par\vspace{0.35em}%
+  \begin{beamercolorbox}[
+      wd=\textwidth,sep=0.4em,leftskip=0.3em,rightskip=0.6em,
+      rounded=false,shadow=false
+    ]{block title proposition}%
+    \raisebox{0.15em}{\usebeamerfont{block title example}#1}%
+  \end{beamercolorbox}%
+  \vspace{-0.4em}%
+  \begin{beamercolorbox}[
+      wd=\textwidth,sep=0.8em,leftskip=0.6em,rightskip=0.6em,
+      rounded=false,shadow=false
+    ]{block body proposition}%
+    \usebeamerfont{block body example}%
+}{%
+  \end{beamercolorbox}%
+  \par\vspace{0.55em}%
+}
+
+\newenvironment{illustrationblock}[1]{%
+  \par\vspace{0.35em}%
+  \begin{beamercolorbox}[
+      wd=\textwidth,sep=0.4em,leftskip=0.3em,rightskip=0.6em,
+      rounded=false,shadow=false
+    ]{block title illustration}%
+    \raisebox{0.15em}{\usebeamerfont{block title example}#1}%
+  \end{beamercolorbox}%
+  \vspace{-0.4em}%
+  \begin{beamercolorbox}[
+      wd=\textwidth,sep=0.8em,leftskip=0.6em,rightskip=0.6em,
+      rounded=false,shadow=false
+    ]{block body illustration}%
+    \usebeamerfont{block body example}%
+}{%
+  \end{beamercolorbox}%
+  \par\vspace{0.55em}%
+}
+
+\newenvironment{proofblock}[1]{%
+  \par\vspace{0.3em}%
+  \begin{beamercolorbox}[
+      wd=\textwidth,sep=0.35em,leftskip=0.3em,rightskip=0.6em,
+      rounded=false,shadow=false
+    ]{block title proof}%
+    \raisebox{0.15em}{\usebeamerfont{block title example}#1}%
+  \end{beamercolorbox}%
+  \vspace{-0.4em}%
+  \begin{beamercolorbox}[
+      wd=\textwidth,sep=0.7em,leftskip=0.6em,rightskip=0.6em,
+      rounded=false,shadow=false
+    ]{block body proof}%
+    \usebeamerfont{block body example}%
+}{%
+  \end{beamercolorbox}%
+  \par\vspace{0.45em}%
+}
+
+
+\usepackage{listings}
+\lstdefinestyle{coursecpp}{
+  language=C++,
+  basicstyle=\ttfamily\fontsize{10}{11.5}\selectfont,
+  keywordstyle=\color{blue},
+  commentstyle=\color{MatrixGreen},
+  stringstyle=\color{Crimson},
+  showstringspaces=false,
+  columns=fullflexible,
+  keepspaces=true,
+  tabsize=4,
+  breaklines=false,
+  frame=none,
+  aboveskip=0.5em,
+  belowskip=0.5em
+}
+\lstset{style=coursecpp}
+\setbeamercovered{invisible}
+
+
+
+
+% Teaching blocks and coursecpp are copied from Deck 2 above.
+% Listings preserve the course font, syntax colors, and brace conventions.
+\usepackage{textcomp}
+\lstdefinestyle{exercisecpp}{
+  style=coursecpp,
+  basicstyle=\ttfamily\fontsize{10}{11.5}\selectfont,
+  aboveskip=0.1em,
+  belowskip=0.1em,
+  upquote=true
+}
+\lstset{style=exercisecpp}
+\setlength{\parskip}{0.1em}
+\newcommand{\exerciseinfo}[2]{%
+  \textbf{#1}\hfill{\small #2}\par
+}
+\newcommand{\solutioninfo}[1]{%
+  {\color{MatrixGreen!75!black}\textbf{#1 -- Solution}}\par
+}
+\newcommand{\context}[1]{{\small #1\par}}
+
+\lstdefinestyle{solutioncpp}{style=exercisecpp,
+  basicstyle=\ttfamily\fontsize{8.8}{9.7}\selectfont}
+\newcommand{\problemmeta}[2]{%
+ {\color{BootcampBlue}\small\textbf{EASY}\quad #1\hfill #2}\par\smallskip\small}
+\newcommand{\explain}[2]{%
+ {\color{BootcampBlueDark}\textbf{#1}}\par #2\par\medskip}
+\setbeamertemplate{frame footer}{\scriptsize FRE6883 | C++ Easy Coding Problems}
+\title{C++ Easy Coding Problems}
+\author{FRE6883 -- Financial Computation}
+\date{}
+% Exactly 20 static slides: 10 problem/solution pairs; no separate title slide.
+% Original course formulations inspired by common beginner coding exercises.
+% No external assets or inputs. C++11; snippets are free functions, without main.
+% Suggested use: 4--7 minutes per problem, then discuss its solution.
+% Start with a hand trace, implement the function, then test an edge case.
+% All sizes are <= 1000, so the explicit conversion from size() to int is safe.
+% Space costs exclude the input; output space is identified where it scales.
+\begin{document}
+\begin{frame}[fragile]{01 | Count positive values -- Problem}
+\problemmeta{Counter + condition}{Try it first}
+\textbf{Your task.} Return how many elements of an integer array are strictly positive. Zero does not count.
+\par\smallskip
+{\small $0 \leq n \leq 1000$; values between $-1000$ and $1000$. Leave the input unchanged.\par}
+\begin{definitionblock}{Examples}
+\texttt{[-2, 0, 5, 3, -1]} $\rightarrow$ \texttt{2}\\ \texttt{[0, -4]} $\rightarrow$ \texttt{0}
+\end{definitionblock}
+\textbf{Implement this function}
+\begin{lstlisting}
+int countPositive(const std::vector<int>& nums);
+\end{lstlisting}
+{\footnotesize \texttt{\#include <vector>}. A vector is a resizable array: \texttt{nums[i]} accesses an element; \texttt{nums.size()} gives its length.\par}
+\medskip
+{\small\color{BootcampBlueDark}\textbf{Think first:} What single value should you keep while reading the array?\par}
+\end{frame}
+
+\begin{frame}[fragile]{01 | Count positive values -- Solution}
+\begin{columns}[T,onlytextwidth]
+\begin{column}{0.635\textwidth}
+\begin{lstlisting}[style=solutioncpp]
+int countPositive(const std::vector<int>& nums)
+{
+    int count = 0;
+    int n = static_cast<int>(nums.size());
+    for (int i = 0; i < n; ++i)
+    {
+        if (nums[i] > 0)
+        {
+            ++count;
+        }
+    }
+    return count;
+}
+\end{lstlisting}
+\end{column}
+\begin{column}{0.34\textwidth}
+\small
+\explain{The idea}{Start a counter at zero. Increase it only when the current element passes the condition.}
+\explain{Trace it}{For \texttt{[-2,0,5,3,-1]}, the counter becomes \texttt{0,0,1,2,2}.}
+\explain{Check the edge}{An empty array returns \texttt{0}: the loop never runs.}
+{\footnotesize\color{BootcampBlueDark}$O(n)$ time; $O(1)$ extra space.\par}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}[fragile]{02 | Running sum -- Problem}
+\problemmeta{Accumulate a result}{Try it first}
+\textbf{Your task.} Return a new array whose element at index $i$ is the sum of the input elements from index $0$ through $i$.
+\par\smallskip
+{\small $0 \leq n \leq 1000$; values between $-1000$ and $1000$. Leave the input unchanged.\par}
+\begin{definitionblock}{Examples}
+\texttt{[2, 1, 3, 4]} $\rightarrow$ \texttt{[2, 3, 6, 10]}\\ \texttt{[-1, 2, -3]} $\rightarrow$ \texttt{[-1, 1, -2]}
+\end{definitionblock}
+\textbf{Implement this function}
+\begin{lstlisting}
+std::vector<int> runningSum(
+    const std::vector<int>& nums);
+\end{lstlisting}
+{\footnotesize \texttt{\#include <vector>}. \texttt{std::vector<int> result(n)} creates $n$ zero-initialized integer elements.\par}
+\medskip
+{\small\color{BootcampBlueDark}\textbf{Think first:} How can you reuse the sum from the previous iteration?\par}
+\end{frame}
+
+\begin{frame}[fragile]{02 | Running sum -- Solution}
+\begin{columns}[T,onlytextwidth]
+\begin{column}{0.635\textwidth}
+\begin{lstlisting}[style=solutioncpp]
+std::vector<int> runningSum(
+    const std::vector<int>& nums)
+{
+    int n = static_cast<int>(nums.size());
+    std::vector<int> result(n);
+    int total = 0;
+    for (int i = 0; i < n; ++i)
+    {
+        total += nums[i];
+        result[i] = total;
+    }
+    return result;
+}
+\end{lstlisting}
+\end{column}
+\begin{column}{0.34\textwidth}
+\small
+\explain{The idea}{Keep a running total. Add the current element, then store that total in the output.}
+\explain{Trace it}{For \texttt{[2,1,3,4]}, the total evolves as $2 \to 3 \to 6 \to 10$.}
+\explain{Check the edge}{An empty input produces an empty output. Negative values also work.}
+{\footnotesize\color{BootcampBlueDark}$O(n)$ time; $O(n)$ output space and $O(1)$ other space.\par}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}[fragile]{03 | Richest customer -- Problem}
+\problemmeta{Nested loops + maximum}{Try it first}
+\textbf{Your task.} Each row of \texttt{accounts} contains one customer\textquotesingle s balances at several banks. Return the largest row total.
+\par\smallskip
+{\small $1 \leq m,b \leq 100$; $m$ rows, $b$ entries per row; balances from $0$ to $1000$.\par}
+\begin{definitionblock}{Examples}
+\texttt{[[2, 3], [1, 8], [4, 4]]} $\rightarrow$ \texttt{9}\\ \texttt{[[0, 0]]} $\rightarrow$ \texttt{0}
+\end{definitionblock}
+\textbf{Implement this function}
+\begin{lstlisting}
+int maximumWealth(
+    const std::vector<std::vector<int>>& accounts);
+\end{lstlisting}
+{\footnotesize \texttt{\#include <vector>} and \texttt{<algorithm>}. \texttt{accounts[r][c]} is row $r$, column $c$; \texttt{std::max(a,b)} returns the larger value.\par}
+\medskip
+{\small\color{BootcampBlueDark}\textbf{Think first:} Which variable must reset when you move to the next customer?\par}
+\end{frame}
+
+\begin{frame}[fragile]{03 | Richest customer -- Solution}
+\begin{columns}[T,onlytextwidth]
+\begin{column}{0.635\textwidth}
+\begin{lstlisting}[style=solutioncpp]
+int maximumWealth(
+    const std::vector<std::vector<int>>& accounts)
+{
+    int best = 0;
+    int rows = static_cast<int>(accounts.size());
+    for (int r = 0; r < rows; ++r)
+    {
+        int total = 0;
+        int b = static_cast<int>(accounts[r].size());
+        for (int c = 0; c < b; ++c)
+        {
+            total += accounts[r][c];
+        }
+        best = std::max(best, total);
+    }
+    return best;
+}
+\end{lstlisting}
+\end{column}
+\begin{column}{0.34\textwidth}
+\small
+\explain{The idea}{The inner loop sums one row. The outer loop compares that total with the best total so far.}
+\explain{Trace it}{Row totals are $5,9,8$. The best total becomes $5 \to 9 \to 9$.}
+\explain{Check the edge}{Reset \texttt{total} inside the outer loop. All-zero balances correctly give zero.}
+{\footnotesize\color{BootcampBlueDark}$O(mb)$ time; $O(1)$ extra space.\par}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}[fragile]{04 | Missing number -- Problem}
+\problemmeta{Use a known total}{Try it first}
+\textbf{Your task.} An array of length $n$ contains distinct integers from $0$ through $n$, with exactly one number missing. Return it.
+\par\smallskip
+{\small $1 \leq n \leq 1000$; no duplicates; the input may be unsorted.\par}
+\begin{definitionblock}{Examples}
+\texttt{[3, 0, 1]} $\rightarrow$ \texttt{2}\\ \texttt{[0, 1]} $\rightarrow$ \texttt{2}
+\end{definitionblock}
+\textbf{Implement this function}
+\begin{lstlisting}
+int missingNumber(const std::vector<int>& nums);
+\end{lstlisting}
+{\footnotesize \texttt{\#include <vector>}. There are $n+1$ possible values, but only $n$ array elements.\par}
+\medskip
+{\small\color{BootcampBlueDark}\textbf{Think first:} Compare the actual sum with $0+1+\cdots+n = n(n+1)/2$.\par}
+\end{frame}
+
+\begin{frame}[fragile]{04 | Missing number -- Solution}
+\begin{columns}[T,onlytextwidth]
+\begin{column}{0.635\textwidth}
+\begin{lstlisting}[style=solutioncpp]
+int missingNumber(const std::vector<int>& nums)
+{
+    int n = static_cast<int>(nums.size());
+    int expected = n * (n + 1) / 2;
+    int actual = 0;
+    for (int i = 0; i < n; ++i)
+    {
+        actual += nums[i];
+    }
+    return expected - actual;
+}
+\end{lstlisting}
+\end{column}
+\begin{column}{0.34\textwidth}
+\small
+\explain{The idea}{Every present number appears in both totals. Subtraction leaves exactly the missing number.}
+\explain{Trace it}{For \texttt{[3,0,1]}: expected $=6$, actual $=4$; the answer is $2$.}
+\explain{Check the edge}{The missing value can be $0$ or $n$. The stated bound keeps \texttt{int} arithmetic safe.}
+{\footnotesize\color{BootcampBlueDark}$O(n)$ time; $O(1)$ extra space.\par}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}[fragile]{05 | Reverse a string -- Problem}
+\problemmeta{Two indices + swapping}{Try it first}
+\textbf{Your task.} Reverse the characters of a string in place. Modify the input instead of returning a second string.
+\par\smallskip
+{\small $0 \leq n \leq 1000$; lowercase English letters only. Use $O(1)$ extra space.\par}
+\begin{definitionblock}{Examples}
+\texttt{"hello"} $\rightarrow$ \texttt{"olleh"}\\ \texttt{"ab"} $\rightarrow$ \texttt{"ba"}
+\end{definitionblock}
+\textbf{Implement this function}
+\begin{lstlisting}
+void reverseString(std::string& s);
+\end{lstlisting}
+{\footnotesize \texttt{\#include <string>}. \texttt{s[i]} accesses a character; \texttt{std::string\&} lets the function change the caller\textquotesingle s string.\par}
+\medskip
+{\small\color{BootcampBlueDark}\textbf{Think first:} Which two characters should exchange positions first?\par}
+\end{frame}
+
+\begin{frame}[fragile]{05 | Reverse a string -- Solution}
+\begin{columns}[T,onlytextwidth]
+\begin{column}{0.635\textwidth}
+\begin{lstlisting}[style=solutioncpp]
+void reverseString(std::string& s)
+{
+    int left = 0;
+    int right = static_cast<int>(s.size()) - 1;
+    while (left < right)
+    {
+        char temp = s[left];
+        s[left] = s[right];
+        s[right] = temp;
+        ++left;
+        --right;
+    }
+}
+\end{lstlisting}
+\end{column}
+\begin{column}{0.34\textwidth}
+\small
+\explain{The idea}{Swap the two outer characters, then move both indices inward. Stop when they meet or cross.}
+\explain{Trace it}{\texttt{hello} $\to$ \texttt{oellh} $\to$ \texttt{olleh}. The middle character stays in place.}
+\explain{Check the edge}{For an empty string, \texttt{right = -1}; the loop is skipped. Convert the size before subtracting.}
+{\footnotesize\color{BootcampBlueDark}$O(n)$ time; $O(1)$ extra space.\par}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}[fragile]{06 | Is it a palindrome? -- Problem}
+\problemmeta{Two indices + early return}{Try it first}
+\textbf{Your task.} Return true if a string reads the same forward and backward. Compare the characters exactly as given.
+\par\smallskip
+{\small $0 \leq n \leq 1000$; lowercase English letters only. An empty string is a palindrome.\par}
+\begin{definitionblock}{Examples}
+\texttt{"level"} $\rightarrow$ \texttt{true}\\ \texttt{"hello"} $\rightarrow$ \texttt{false}
+\end{definitionblock}
+\textbf{Implement this function}
+\begin{lstlisting}
+bool isPalindrome(const std::string& s);
+\end{lstlisting}
+{\footnotesize \texttt{\#include <string>}. \texttt{const std::string\&} reads the existing string without copying or modifying it.\par}
+\medskip
+{\small\color{BootcampBlueDark}\textbf{Think first:} What observation lets you stop before checking every character?\par}
+\end{frame}
+
+\begin{frame}[fragile]{06 | Is it a palindrome? -- Solution}
+\begin{columns}[T,onlytextwidth]
+\begin{column}{0.635\textwidth}
+\begin{lstlisting}[style=solutioncpp]
+bool isPalindrome(const std::string& s)
+{
+    int left = 0;
+    int right = static_cast<int>(s.size()) - 1;
+    while (left < right)
+    {
+        if (s[left] != s[right])
+        {
+            return false;
+        }
+        ++left;
+        --right;
+    }
+    return true;
+}
+\end{lstlisting}
+\end{column}
+\begin{column}{0.34\textwidth}
+\small
+\explain{The idea}{Compare matching positions from the outside inward. One mismatch proves the answer is false.}
+\explain{Trace it}{\texttt{level}: compare \texttt{l/l}, then \texttt{e/e}. No mismatch, so return true.}
+\explain{Check the edge}{Return true after the loop, once every required pair has passed. A single character also passes.}
+{\footnotesize\color{BootcampBlueDark}$O(n)$ worst-case time; $O(1)$ extra space.\par}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}[fragile]{07 | Move zeroes -- Problem}
+\problemmeta{Read index + write index}{Try it first}
+\textbf{Your task.} Move all zeroes to the end of the array in place. Preserve the relative order of the nonzero elements.
+\par\smallskip
+{\small $0 \leq n \leq 1000$; values between $-1000$ and $1000$. Use $O(1)$ extra space.\par}
+\begin{definitionblock}{Examples}
+\texttt{[0, 4, 0, 1, 3]} $\rightarrow$ \texttt{[4, 1, 3, 0, 0]}\\ \texttt{[0, 0]} $\rightarrow$ \texttt{[0, 0]}
+\end{definitionblock}
+\textbf{Implement this function}
+\begin{lstlisting}
+void moveZeroes(std::vector<int>& nums);
+\end{lstlisting}
+{\footnotesize \texttt{\#include <vector>}. \texttt{std::vector<int>\&} allows changes to the original array. Its length must stay the same.\par}
+\medskip
+{\small\color{BootcampBlueDark}\textbf{Think first:} First collect nonzero values at the front. What should fill the remaining positions?\par}
+\end{frame}
+
+\begin{frame}[fragile]{07 | Move zeroes -- Solution}
+\begin{columns}[T,onlytextwidth]
+\begin{column}{0.635\textwidth}
+\begin{lstlisting}[style=solutioncpp]
+void moveZeroes(std::vector<int>& nums)
+{
+    int n = static_cast<int>(nums.size());
+    int write = 0;
+    for (int read = 0; read < n; ++read)
+    {
+        if (nums[read] != 0)
+        {
+            nums[write] = nums[read];
+            ++write;
+        }
+    }
+    for (int i = write; i < n; ++i)
+    {
+        nums[i] = 0;
+    }
+}
+\end{lstlisting}
+\end{column}
+\begin{column}{0.34\textwidth}
+\small
+\explain{The idea}{Copy each nonzero value to the next free position at the front, then fill the unused tail with zeroes.}
+\explain{Trace it}{The prefix becomes \texttt{[4,1,3]}; \texttt{write = 3}. Fill indices $3$ and $4$ with zeroes.}
+\explain{Check the edge}{\texttt{write} never passes \texttt{read}, so no unread value is overwritten. All-zero input works.}
+{\footnotesize\color{BootcampBlueDark}$O(n)$ time for two passes; $O(1)$ extra space.\par}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}[fragile]{08 | Two Sum -- Problem}
+\problemmeta{Try every distinct pair}{Try it first}
+\textbf{Your task.} Return the two \textbf{indices} of elements whose sum equals \texttt{target}. You must use two different positions.
+\par\smallskip
+{\small $2 \leq n \leq 1000$; values and target between $-10^4$ and $10^4$. Exactly one valid pair exists; either index order is accepted.\par}
+\begin{definitionblock}{Examples}
+\texttt{nums = [4, 7, 1, 9], target = 10} $\rightarrow$ \texttt{[2, 3]}\\ \texttt{nums = [3, 3], target = 6} $\rightarrow$ \texttt{[0, 1]}
+\end{definitionblock}
+\textbf{Implement this function}
+\begin{lstlisting}
+std::vector<int> twoSum(
+    const std::vector<int>& nums, int target);
+\end{lstlisting}
+{\footnotesize \texttt{\#include <vector>}. \texttt{return \{i, j\};} constructs a two-element result vector. Indices start at zero.\par}
+\medskip
+{\small\color{BootcampBlueDark}\textbf{Think first:} For a fixed index $i$, start the second index at $i+1$.\par}
+\end{frame}
+
+\begin{frame}[fragile]{08 | Two Sum -- Solution}
+\begin{columns}[T,onlytextwidth]
+\begin{column}{0.635\textwidth}
+\begin{lstlisting}[style=solutioncpp]
+std::vector<int> twoSum(
+    const std::vector<int>& nums, int target)
+{
+    int n = static_cast<int>(nums.size());
+    for (int i = 0; i < n; ++i)
+    {
+        for (int j = i + 1; j < n; ++j)
+        {
+            if (nums[i] + nums[j] == target)
+            {
+                return {i, j};
+            }
+        }
+    }
+    return {}; // Defensive fallback
+}
+\end{lstlisting}
+\end{column}
+\begin{column}{0.34\textwidth}
+\small
+\explain{The idea}{Test each pair once. Starting at i + 1 prevents reusing one element and avoids checking reversed pairs.}
+\explain{Trace it}{Values $1+9=10$ are at indices $2$ and $3$. Return \texttt{[2,3]}.}
+\explain{Check the edge}{Equal values at different indices are allowed. The guarantee makes the fallback unnecessary.}
+{\footnotesize\color{BootcampBlueDark}$O(n^2)$ time; $O(1)$ extra space. Suitable for these small inputs.\par}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}[fragile]{09 | Best time to buy and sell -- Problem}
+\problemmeta{Track the best value so far}{Try it first}
+\textbf{Your task.} Given daily prices, return the maximum profit from at most one buy followed by one sell on a later day. You may choose no trade.
+\par\smallskip
+{\small $1 \leq n \leq 1000$; prices from $0$ to $10^4$. Return $0$ if no positive profit is possible.\par}
+\begin{definitionblock}{Examples}
+\texttt{[7, 1, 5, 3, 6, 4]} $\rightarrow$ \texttt{5} (buy at 1, sell at 6)\\ \texttt{[7, 6, 4, 3, 1]} $\rightarrow$ \texttt{0}
+\end{definitionblock}
+\textbf{Implement this function}
+\begin{lstlisting}
+int maxProfit(const std::vector<int>& prices);
+\end{lstlisting}
+{\footnotesize \texttt{\#include <vector>} and \texttt{<algorithm>}. \texttt{std::min} and \texttt{std::max} select the smaller and larger values.\par}
+\medskip
+{\small\color{BootcampBlueDark}\textbf{Think first:} If you sell today, which price from an earlier day would you want to have paid?\par}
+\end{frame}
+
+\begin{frame}[fragile]{09 | Best time to buy and sell -- Solution}
+\begin{columns}[T,onlytextwidth]
+\begin{column}{0.635\textwidth}
+\begin{lstlisting}[style=solutioncpp]
+int maxProfit(const std::vector<int>& prices)
+{
+    int n = static_cast<int>(prices.size());
+    int minPrice = prices[0];
+    int best = 0;
+    for (int i = 1; i < n; ++i)
+    {
+        int profit = prices[i] - minPrice;
+        best = std::max(best, profit);
+        minPrice = std::min(minPrice, prices[i]);
+    }
+    return best;
+}
+\end{lstlisting}
+\end{column}
+\begin{column}{0.34\textwidth}
+\small
+\explain{The idea}{Before each iteration, minPrice is the cheapest earlier price. Evaluate selling today, then update that minimum.}
+\explain{Trace it}{At price $6$, the earlier minimum is $1$, so the candidate profit is $6-1=5$.}
+\explain{Check the edge}{One day or decreasing prices gives $0$. Choosing the global minimum and maximum can reverse time.}
+{\footnotesize\color{BootcampBlueDark}$O(n)$ time; $O(1)$ extra space.\par}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}[fragile]{10 | Binary search -- Problem}
+\problemmeta{Halve a sorted search interval}{Try it first}
+\textbf{Your task.} Given an array sorted in strictly increasing order, return the index of \texttt{target}, or \texttt{-1} if it is absent.
+\par\smallskip
+{\small $0 \leq n \leq 1000$; integer values; no duplicates. Aim for $O(\log n)$ time when $n>1$.\par}
+\begin{definitionblock}{Examples}
+\texttt{nums = [-3, 0, 4, 8, 12], target = 8} $\rightarrow$ \texttt{3}\\ \texttt{nums = [-3, 0, 4, 8, 12], target = 5} $\rightarrow$ \texttt{-1}
+\end{definitionblock}
+\textbf{Implement this function}
+\begin{lstlisting}
+int search(const std::vector<int>& nums, int target);
+\end{lstlisting}
+{\footnotesize \texttt{\#include <vector>}. Keep an inclusive interval \texttt{[left, right]}; only those positions may still contain the target.\par}
+\medskip
+{\small\color{BootcampBlueDark}\textbf{Think first:} After inspecting the middle value, which half can you rule out?\par}
+\end{frame}
+
+\begin{frame}[fragile]{10 | Binary search -- Solution}
+\begin{columns}[T,onlytextwidth]
+\begin{column}{0.635\textwidth}
+\begin{lstlisting}[style=solutioncpp]
+int search(const std::vector<int>& nums, int target)
+{
+    int left = 0;
+    int right = static_cast<int>(nums.size()) - 1;
+    while (left <= right)
+    {
+        int mid = left + (right - left) / 2;
+        if (nums[mid] == target) { return mid; }
+        if (nums[mid] < target)  { left = mid + 1; }
+        else                    { right = mid - 1; }
+    }
+    return -1;
+}
+\end{lstlisting}
+\end{column}
+\begin{column}{0.34\textwidth}
+\small
+\explain{The idea}{Sorted order rules out half the remaining positions. Exclude mid so the interval always shrinks.}
+\explain{Trace it}{Target $8$: index $2$ holds $4$. Keep $[3,4]$; index $3$ holds $8$.}
+\explain{Check the edge}{\texttt{left <= right} includes the last candidate. Empty input returns $-1$.}
+{\footnotesize\color{BootcampBlueDark}$O(\log n)$ time for $n>1$; $O(1)$ extra space.\par}
+\end{column}
+\end{columns}
+\end{frame}
+
+\end{document}

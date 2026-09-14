@@ -1,0 +1,42 @@
+C++ Survival Kit
+29 core frames | 58.5 minutes including student work and reveals
+Two optional reserve exercises, each with a separate solution (4 extra frames).
+Supersedes the earlier Deck 2 outline and duration.
+
+1. C++ Survival Kit [0.5 min]
+2. Predict: four variables, four types [2 min]
+3. Find the bug: a value that was never set [2 min]
+4. Predict: does double prevent integer division? [2 min]
+5. Find the bug: a call payoff condition [2.5 min]
+6. Complete the condition: valid model inputs [2.5 min]
+7. Predict: how many times does the loop run? [2 min]
+8. Predict: ++i and i++ [2 min]
+9. Complete the code: visit every tree node [2.5 min]
+10. Find the bug: one array access too many [2.5 min]
+11. Predict: which array elements are initialized? [1.5 min]
+12. Predict: a vector can grow [2 min]
+13. Find the bug: size is not the last index [1.5 min]
+14. Match the pieces of a function [2 min]
+15. Solution: declaration, definition, and call [1 min]
+16. Find the bug: the definition is missing at build time [2 min]
+17. Predict: does square change its argument? [2 min]
+18. Predict: why readPrice needs a reference [2.5 min]
+19. Read the signature: why const, and why &? [2.5 min]
+20. Find the bug: const is a promise to the caller [2 min]
+21. Exercise: choose three parameter signatures [3 min]
+22. Solution: choose passing style from the job [1.5 min]
+23. Read the CRR loop: why move backward? [2 min]
+24. Read the CRR loop: why these inner bounds? [2 min]
+25. Trace: why may Price[i] be overwritten? [3 min]
+26. Count the work before naming the complexity [2 min]
+27. Exercise: find two indexing bugs [3 min]
+28. Solution: include the root, preserve child bounds [1.5 min]
+29. Exit ticket: repair and explain [1 min]
+30. Reserve: maximum drawdown [optional]
+31. Reserve solution: track the running peak [optional]
+32. Reserve: moving average [optional]
+33. Reserve solution: reset the sum for each window [optional]
+
+Validation: 55 PDF pages with 22 question/answer overlay pairs.
+C++ outputs, expected const error, repairs, linking, and reserve boundary cases checked.
+All rendered pages inspected; no overfull or underfull layout warnings.

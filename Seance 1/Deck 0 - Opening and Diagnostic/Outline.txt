@@ -1,0 +1,26 @@
+Opening / Diagnostic - implemented Deck 0
+8 Beamer frames | 12 PDF pages including answer overlays | approximately 14 minutes
+Supersedes the initial five-slide, 20-minute proposal for this deck.
+
+1. FRE6883 - Financial Computation / Recitation 1 (0:30)
+   Subtitle: C++ Fundamentals, Binomial Pricing, and Git.
+2. What are recitations for? (1:30)
+   Read, write, debug, explain, and apply code; welcome mixed Topic 2 exposure.
+3. What is your programming background? (2:00)
+   Six experience categories plus a separate Topic 2 exposure poll.
+4. Predict the output: copying a value (2:00)
+   Vote first; next overlay reveals 3 4 and explains the copy.
+5. Predict the output: a short loop (2:00)
+   Vote first; next overlay reveals 0 1 2 and explains the stopping condition.
+6. What happens? A reference parameter (2:00)
+   Explicitly optional diagnostic; next overlay reveals 4 and explains the alias.
+7. Predict the output: integer division (2:00)
+   Vote first; next overlay reveals 2 and explains integer operands and x / 2.0.
+8. From a financial problem to an algorithm (2:00)
+   Call payoff at expiry: inputs/output, algorithm, and test cases lead into Deck 1.
+
+The .tex file is self-contained and includes the inherited FRE6233 theme,
+palette, and block macros. C++ listings follow the FRE6883 lecture style.
+Pacing and adaptation guidance are comments in the source, not visible slides.
+Compile using pdfLaTeX twice or latexmk -pdf Deck_0_Opening_Diagnostic.tex.
+Compilation, all four C++ outputs, overlay order, and rendered layout verified.

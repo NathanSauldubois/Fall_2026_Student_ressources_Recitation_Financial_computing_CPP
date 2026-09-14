@@ -1,0 +1,34 @@
+From a Financial Problem to C++ Code
+Implemented proposal: 27 frames | 46.5 minutes including exercises and reveals.
+Supersedes the original six-slide, 25-minute outline.
+
+1. Title [0.5 min]
+2. One period: two possible stock prices [2.0 min]
+3. Explain the procedure to a computer [2.0 min]
+4. Which variables and types do we need? [1.5 min]
+5. Compute the two stock prices [1.0 min]
+6. Implement the positive part [1.5 min]
+7. Compute the price and display it [2.0 min]
+8. Exercise: complete the one-period pricer [4.0 min]
+9. Solution: a complete one-period program [2.0 min]
+10. How do we avoid writing every node manually? [1.0 min]
+11. One formula describes every stock-price node [1.5 min]
+12. Exercise: complete the nested loops [2.0 min]
+13. Solution: visit each node once [1.0 min]
+14. When will we need to keep a computed value? [1.5 min]
+15. A hedge must match both option payoffs [2.0 min]
+16. Delta is the number of shares in the hedge [1.5 min]
+17. Exercise: compute and interpret the hedge [3.0 min]
+18. Solution: half a share and a cash position [2.0 min]
+19. Design a function that computes delta [1.5 min]
+20. Solution: return one double from four inputs [1.0 min]
+21. The same hedge works locally in a CRR tree [1.5 min]
+22. Read one backward-induction update [1.5 min]
+23. Exercise: compute the hedge before losing data [3.0 min]
+24. Solution: use both children, then overwrite [2.0 min]
+25. Prepare the terminal row in the existing pricer [1.0 min]
+26. Augment the existing CRR loop [2.0 min]
+27. From Finance to Code [1.0 min]
+
+Self-contained Beamer source with inherited theme, macros, palette, and code style.
+Part I: pricing formulas to C++; Part II: nodes and arrays; Part III: replication, delta, and safe backward updates.

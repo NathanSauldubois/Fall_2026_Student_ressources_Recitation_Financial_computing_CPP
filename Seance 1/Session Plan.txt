@@ -1,0 +1,102 @@
+CURRENT DECK STATUS AND TIMING
+Deck 0: implemented, 8 frames, approximately 14 minutes.
+Deck 1: implemented, 27 frames, 46.5 minutes.
+Deck 2: implemented, 29 core frames, 58.5 minutes; 2 optional reserve exercises
+with separate solutions (4 additional frames, excluded from required timing).
+Each implemented deck's .tex and individual Outline.txt supersede the original
+outline and timing below. The latest user requests determine these durations.
+
+Decks 0-2 total 119 minutes. Within the original 150-minute session target,
+31 minutes remain for breaks and Decks 3-4 combined; a 10-minute break leaves
+21 minutes for those two decks. Their earlier timing proposals will need to
+be revisited when they are authored. Reserve exercises add no required time.
+The original session proposal below is retained as planning history.
+
+FRE6883 - Financial Computation
+Recitation 1: diagnostic and transition
+
+STATUS
+Proposal only. Five folders follow the explicit Deck 0-4 list (although the request says four decks). No slide files or exercise programs have been created. Outlines are in English, matching the course and 6233 sources.
+
+SESSION OUTCOME
+Students can specify, write, compile, test, explain, and save a small financial C++ program because they can connect a financial rule to elementary program structure. Topic 1 is the common prerequisite; Topic 2 exposure is mixed. Every core C++ construct is introduced before use.
+
+TIMING
+00:00-00:20  Deck 0: Opening / Diagnostic                     20 min
+00:20-00:45  Deck 1: From a Financial Problem to C++ Code     25 min
+00:45-01:25  Deck 2: C++ Survival Kit                        40 min
+01:25-01:35  Break                                          10 min
+01:35-01:50  Deck 3: Git & GitHub Cheat Sheet                15 min
+01:50-02:30  Deck 4: C++ Exercises                           40 min
+Total: 150 minutes, including 140 minutes of teaching and practice.
+30 core slides plus 2 optional exercise slides. Slide 1 of each deck incorporates its opening; do not add unbudgeted title/agenda/solution slides. Exercise time includes instructions, coding, and discussion.
+
+DIAGNOSTIC ROUTING
+Use the opening results to choose scaffolding, without adding content or changing the total duration. Students who cannot connect/build/run pair with a working setup, taking the navigator/tester role; record individual blockers for follow-up. If at least one third cannot trace the diagnostic fragments, use line-by-line scaffolds in Deck 2 and starter skeletons in Deck 4. Otherwise, ask for independent prediction before revealing the same explanations. Topic 2-experienced students get boundary-test questions and the optional tasks while others complete the core. Reassess individuals with the exit ticket; do not infer mastery from a partner's output.
+
+6233 VISUAL REFERENCE
+Use the Fall 2026 FRE6233 source and rendered deck:
+../Stochastic calculus and option pricing/Fall 2026/Mon Repo/Seance 1/Slides/Slides_Lecture_1.tex
+../Stochastic calculus and option pricing/Fall 2026/Mon Repo/Seance 1/Slides/Slides_Lecture_1.pdf
+(Paths above are relative to the Recitation CPP project root.)
+Observed style: 16:9 Beamer/Metropolis, 10pt source base, Latin Modern source typography, white background, black text, full-width dark-blue (#1A3C68) frame-title bar with white bold titles, restrained blue/green/gold/gray teaching blocks, fraction page numbers, no navigation icons, sparse title page with a thin blue rule. Preserve the rendered title hierarchy and spacing. Reset numbering per deck. Adapt definition blocks to concepts, illustration blocks to examples/exercises, and gray blocks to explanations. Use readable monospace code and restrained syntax coloring; keep one task or code fragment per slide. Do not inherit the older NYU-poly lecture design. Exact slide implementation is deferred.
+
+COURSE CODING CONVENTIONS
+Use explicit int/double declarations and initialization, int main(), std::cout/std::cin/std::cerr/std::endl, and the headers <iostream>, <iomanip>, <cmath> only where needed. Match the course's braces on separate lines, indentation, short // comments, std::fixed << std::setprecision(2), conventional for loops, and return 0 or return -1 for invalid numeric ranges. Keep the core exercises in one .cpp file.
+Preserve s0, u, d, r, n, i in node examples; U, D, R and S0 where reproducing course function parameters; z and K in payoff examples; fre:: and names such as CallPayoff or CalculateAssetPrice for optional function work. Do not replace course idioms with auto, range-for, lambdas, STL algorithms, classes, templates, pointers, or dynamic allocation. Arrays and user-defined functions are optional today; references, multi-file implementation, nested-tree traversal, and CRR backward induction are deferred to a shared Topic 2 baseline.
+Use the lecture's g++ HelloWorld.cpp / ./a.out workflow as the diagnostic anchor; a named output can be explained later if needed. Do not introduce a new build system. For exercises assume correctly typed numeric input and validate its specified ranges; stream-recovery techniques are beyond this session.
+
+CONTENT BOUNDARIES
+The central example is a terminal payoff, not a full option pricer. Core practice moves to a put payoff, a small scenario table, and an accumulator, avoiding repetition of BinomialTreeModel01-05 and the HW1 CRR implementation. Explain that an unweighted scenario mean is not an option price. No new probability derivation or backward-induction implementation. Optional material uses only selected Topic 2 constructs and does not consume additional whole-class time.
+
+SOURCE REVIEW
+Topic 1 Part 1: 66 pages; setup, remote architecture, HelloWorld, and compile/run, especially pp. 7-12 and 49-65.
+Topic 1 Part 2 Updated: 18 pages; Classroom 50, assignment repository, HTTPS clone, existing authentication, and build/run, especially pp. 2 and 6-15. Git staging/committing/pushing is the practical consolidation in Deck 3. No AWS provisioning, credential creation, or account-setting walkthrough is repeated.
+Topic 2 Updated: 40 pages; basic I/O pp. 4-5; model and CRR pp. 7-8; node formula and formatting pp. 9-11; loops pp. 12-13; arrays pp. 14-17; validation pp. 18-20; functions/namespaces/references pp. 21-32; CRR pp. 33-37; HW1 pp. 38-39. All extracted page text was reviewed; representative rendered code pages were also inspected. No standalone course .cpp files were found in this project, so coding conventions come from the embedded lecture listings.
+
+SOURCE CORRECTION TO PRESERVE ACCURACY
+Topic 2 p. 19 correctly rejects r >= u || r <= d. The later GetInputData / ValidateInputData examples on pp. 24-25 instead show R >= U || U <= D, which repeats an already checked condition and misses R <= D. When these conditions are used, apply R >= U || R <= D. Preserve coding style, not this error. The lecture uses gross one-period factors: r = 1.00545 means the gross risk-free factor; do not substitute a net interest rate into q = (R - D) / (U - D). If arrays are used in optional work, keep their size a fixed compile-time constant as in Topic 2 pp. 14-17.
+
+DECK OUTLINES
+
+Deck 0 - Opening and Diagnostic | 20 min
+1. What can you build today? (2 min) - Introduce the session outcome: turn a small financial calculation into a program you can run, explain, test, and save. No Topic 2 prerequisite.
+2. Where does your code run? (3 min) - Quick poll: laptop, VS Code, EC2 terminal, compiler, and GitHub. Students identify where source files and the executable live.
+3. Show that your setup works (6 min) - Open the existing remote workspace; locate, edit, save, compile, and run HelloWorld.cpp using g++ HelloWorld.cpp and ./a.out. Record connection/build/run blockers; do not repeat installation.
+4. Predict before you run (6 min) - Three low-stakes diagnostic prompts: identify input/output; predict 5 / 2 versus 5.0 / 2; trace a supplied short if/for fragment. Collect individual answers before discussion; unfamiliar syntax is a valid response.
+5. Choose your starting point (3 min) - Collect Topic 2 exposure and one difficulty. Pair students; assign a supported starting scaffold or independent route. Transition to a financial specification everyone can understand.
+
+Deck 1 - From a Financial Problem to Cpp Code | 25 min
+1. Specify the result before writing code (3 min) - Running example: European call payoff at expiry, given terminal stock price z and strike K. Separate this payoff from the option price today.
+2. Turn financial quantities into variables (4 min) - Map z and K to double; declare inputs, assumptions, output, and units. Use z = 120.0 and K = 100.0 as a hand-checkable example.
+3. Describe the calculation in plain steps (4 min) - Read inputs, reject invalid ranges, compare z with K, compute the payoff, display the result. Students order the steps before seeing syntax.
+4. Translate one step at a time (6 min) - Map the pseudocode to a short program inside main using std::cin, if/else, and std::cout. Explain each new construct locally; reveal code progressively.
+5. Decide how you will know it works (5 min) - Students predict cases z = 80, 100, 120 with K = 100, plus an invalid negative input. Compare expected and observed results; a successful compile is only the first check.
+6. Connect this program to Topic 2 (3 min) - Locate stock-node calculation, terminal payoff, and valuation in the lecture pipeline. Explain that u, d, r are gross one-period factors when mentioned. Point to the existing pricer without deriving or implementing CRR.
+
+Deck 2 - Cpp Survival Kit and Interactive Exercises | 40 min
+1. Read the shape of a C++ program (4 min) - Annotate includes, int main(), declarations, braces, semicolons, comments, and return 0. Separate terminal commands from C++ statements.
+2. Choose types and initialize values (5 min) - Predict short int/double examples, including integer division. Use explicit types and initialized variables; discuss the result before running.
+3. Read input and display a useful result (4 min) - Repair a small std::cin/std::cout fragment. Introduce <iomanip>, std::fixed, and std::setprecision(2) as display formatting.
+4. Make conditions say what you mean (6 min) - Trace = versus ==, inequalities, and ||; repair a supplied payoff condition and check the equality case. Keep numeric input assumptions explicit.
+5. Trace a loop one iteration at a time (6 min) - Trace for (int i = 0; i <= 3; i++) with a small value table; repair an off-by-one bound. No arrays needed.
+6. Accumulate values in a loop (5 min) - Predict a sum of a few supplied payoff scenarios. Identify initialization, update, and final output; connect this to the later independent exercise.
+7. Find the first actionable error (6 min) - Pairs classify a missing semicolon, wrong filename/directory, and a compiling but incorrect formula. Read the first compiler message, fix one cause, save, rebuild, rerun.
+8. Explain a repair and a test (4 min) - Each pair explains one correction and chooses a boundary test that would catch it. Transition from guided fragments to independent programs.
+
+Deck 3 - Git and GitHub Cheat Sheet | 15 min
+1. Know which copy you are changing (3 min) - Distinguish working files on EC2, staging area, local commits, and the GitHub remote. Saving a file, committing, and pushing are separate steps.
+2. Check the repository before editing (3 min) - Compact reference: clone once if needed, cd into the repository, git status, git remote -v, and git pull --ff-only when the working tree is clean. Reuse Topic 1 authentication.
+3. Record one meaningful change (4 min) - Demonstrate git diff, git add Exercise01.cpp, git diff --cached, git commit -m "Complete payoff exercise", and git push in a designated practice repository. Stage named source files.
+4. Verify the result on GitHub (3 min) - Match the latest local commit to the browser view and inspect the intended file. Diagnose nothing staged, wrong directory, and rejected authentication/push without teaching conflict resolution.
+5. Keep the daily workflow at hand (2 min) - One compact command sequence for the handout. Keep .pem keys, tokens, and generated executables out of commits. Students state the next command for a sample repository state.
+
+Deck 4 - Cpp Exercises | 40 min
+1. Build, test, and explain your result (2 min) - Explain the independent exercise format: specification, starter scaffold if needed, expected-output cases, then explanation. Students with working setups code; blocked students pair as navigator/tester.
+2. Exercise 1: compute a European put payoff (10 min) - Read z and K, apply the stated nonnegative-input rule, compute K - z when z < K and 0 otherwise, and format the result. Acceptance cases for K = 100: z = 80, 100, 120 give 20.00, 0.00, 0.00; a negative input is rejected.
+3. Exercise 2: print a payoff scenario table (10 min) - For K = 100, generate z = 80, 90, 100, 110, 120 with a for loop and print the call payoff for each value. Expected payoffs: 0, 0, 0, 10, 20. Five rows, including both endpoints; no arrays.
+4. Exercise 3: accumulate and check the scenarios (10 min) - Extend Exercise 2 to report total payoff 30.00 and arithmetic mean payoff 6.00. Repair an incorrectly placed accumulator initialization or integer-division error. State that this scenario mean is not an option valuation.
+5. Compare solutions against the specification (5 min) - Pairs exchange programs and acceptance tests, then explain one bug and its repair. Show solution excerpts only after the attempt; solution reveals are within this slide time.
+6. Exit ticket and next-week bridge (3 min) - Individual check: identify a type, explain a loop bound, propose a test, and name the save/commit/push distinction. Record unresolved setup issues and one next-week question; connect to functions, arrays, and the shared Topic 2 baseline.
+7. Optional / Challenge: validate a binomial node (optional) - For students already comfortable with Topic 2: use s0 = 106.00, u = 1.15125, d = 0.86862; validate n >= 0 and 0 <= i <= n, then calculate s0 * std::pow(u, i) * std::pow(d, n - i). Match Topic 2 p. 10 at n = 3, i = 2: 122.03. Add the model range checks; if testing no-arbitrage with r, reject r >= u || r <= d.
+8. Optional / Challenge: organize or store your results (optional) - Choose one extension already encountered in Topic 2: move payoff calculation into a fre::CallPayoff function with the course naming convention, or store five scenario payoffs in a fixed-size array using const int SIZE = 5. No references required. Keep these as early-finisher or take-home tasks, not additional plenary time.
