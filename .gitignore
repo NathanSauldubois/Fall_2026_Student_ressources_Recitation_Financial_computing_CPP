@@ -10,3 +10,6 @@
 
 # macOS metadata
 .DS_Store
+
+# Private teaching resources (kept locally only)
+/Ressources/
