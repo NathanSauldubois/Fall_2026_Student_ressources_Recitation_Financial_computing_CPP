@@ -14,10 +14,12 @@ pricer because they have rebuilt it from independently testable functions and
 verified the data flow from model inputs to Price[0].
 
 FORMAT
-35 Beamer frames, approximately 100 minutes. Twelve guided activities use a
-problem frame followed by a solution frame (the final integration activity uses
-two problem and two solution frames). Students first predict or complete code,
-then compare and explain. Timings below include student work and discussion.
+36 core Beamer frames, approximately 100 minutes. Twelve guided activities use
+a problem frame followed by a solution frame (the final integration activity
+uses two problem and two solution frames). Students first predict or complete
+code, then compare and explain. Ten additional reserve frames at the end reuse
+four problem/solution pairs from Recitation 1 Deck 5. Timings below include
+student work and discussion but exclude the reserve practice.
 
 TIMING
 00:00-00:06  Opening, outcome, and structured-programming recall       6 min
@@ -26,8 +28,8 @@ TIMING
 00:36-00:56  Functions, namespaces, values, and references             20 min
 00:56-01:12  Payoff and terminal-row construction                      16 min
 01:12-01:26  CRR backward induction and overwrite order                14 min
-01:26-01:36  Assemble the complete pricer                              10 min
-01:36-01:40  Test matrix and exit ticket                                4 min
+01:26-01:37  Assemble and run the Lecture 2 pricer                      11 min
+01:37-01:40  Test matrix and exit ticket                                3 min
 Total                                                               100 min
 
 ACTIVITIES
@@ -44,6 +46,12 @@ ACTIVITIES
 11. Diagnose why a decreasing inner loop corrupts in-place data.
 12. Assemble a guarded, standard-C++ PriceByCRR function.
 
+RESERVE PRACTICE FROM RECITATION 1 DECK 5
+- Count positive values.
+- Running sum.
+- Richest customer.
+- Best time to buy and sell stock.
+
 TECHNICAL NOTES
 - The deck follows the visual and C++ conventions of Recitation 1 Decks 1 and 5.
 - The model uses gross one-period factors with 0 < D < R < U and S0 > 0.
@@ -53,8 +61,9 @@ TECHNICAL NOTES
 - The final pricer uses a fixed compile-time capacity SIZE = 9 and accepts
   1 <= N <= 8. This avoids Lecture 2's variable-length array, which is not
   standard C++.
-- For the shared example S0=100, U=1.2, D=0.8, R=1.1, K=100, N=2, terminal
-  payoffs are [0,0,44], the time-1 row is [0,30], and Price[0] is 20.4545.
+- CRR uses the Lecture 2 parameters S0=106, U=1.15125, D=0.86862,
+  R=1.00545, K=100. For a short N=2 trace, terminal payoffs are approximately
+  [0,6.00,40.49], the time-1 row is [2.8890,22.5745], and Price[0] is 12.3521.
+  The complete Lecture 2 N=8 program returns 21.68.
 - Solution frames are intentionally separate so the instructor can stop before
   revealing them.
-

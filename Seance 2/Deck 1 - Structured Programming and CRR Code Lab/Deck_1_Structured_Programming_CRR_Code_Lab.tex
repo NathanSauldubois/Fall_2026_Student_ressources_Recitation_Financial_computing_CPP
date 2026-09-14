@@ -182,7 +182,7 @@
 \author{}
 \date{}
 
-% 35 frames, planned for approximately 100 minutes.
+% 36 core frames, planned for approximately 100 minutes, plus reserve practice.
 % Source baseline: Lecture 2, Topic 2, pp. 7--37.
 % Visual and exercise conventions: Recitation 1, Decks 1 and 5.
 % Model: gross factors, S0 > 0, 0 < D < R < U, European call.
@@ -736,7 +736,7 @@ for (int i = /* first node */; i /* last node */ N; ++i)
 }
 \end{lstlisting}
 \begin{definitionblock}{Trace this case}
-$S_0=100$, $U=1.2$, $D=0.8$, $K=100$, $N=2$.\par
+$S_0=106$, $U=1.15125$, $D=0.86862$, $K=100$, $N=2$.\par
 Complete the stock row $[\_\_,\_\_,\_\_]$ and payoff row $[\_\_,\_\_,\_\_]$.
 \end{definitionblock}
 \end{frame}
@@ -758,8 +758,8 @@ for (int i = 0; i <= N; ++i)
 \end{column}
 \begin{column}{0.35\textwidth}
 \small
-\explain{Stock row}{$[64,96,144]$ for $i=0,1,2$.}
-\explain{Payoff row}{$[0,0,44]$ for a call struck at $100$.}
+\explain{Stock row}{$[79.98,106.00,140.49]$ for $i=0,1,2$.}
+\explain{Payoff row}{$[0,6.00,40.49]$ for a call struck at $100$.}
 \explain{Invariant}{After the loop, indices $0$ through $N$ hold the complete expiry row.}
 \end{column}
 \end{columns}
@@ -767,16 +767,16 @@ for (int i = 0; i <= N; ++i)
 
 % FRAME 25 -- trace
 \begin{frame}{Backward induction shrinks one row at a time}
-For $q=0.75$ and $R=1.1$, begin with the terminal row $[0,0,44]$.
+For $q\approx0.48413$ and $R=1.00545$, begin with the terminal row $[0,6.00,40.49]$.
 \begin{center}
 \renewcommand{\arraystretch}{1.35}
 \begin{tabular}{ccl}
 \toprule
 Step & Active values & Update rule \\
 \midrule
-$n=2$ & $[0,0,44]$ & terminal call payoffs \\
-$n=1$ & $[0,30]$ & $H(1,i)=\frac{0.75H(2,i+1)+0.25H(2,i)}{1.1}$ \\
-$n=0$ & $[20.4545]$ & same local rule \\
+$n=2$ & $[0,6.00,40.49]$ & terminal call payoffs \\
+$n=1$ & $[2.8890,22.5745]$ & $H(1,i)=\frac{qH(2,i+1)+(1-q)H(2,i)}{R}$ \\
+$n=0$ & $[12.3521]$ & same local rule \\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -847,7 +847,7 @@ for (int n = N - 1; n >= 0; --n)
 }
 \end{lstlisting}
 \begin{definitionblock}{Trace only row $n=1$}
-Start from \texttt{Price = [0, 0, 44]}. Which entry is overwritten first? Which later calculation reads that changed entry as if it were still a child?
+Start from \texttt{Price = [0, 6.00, 40.49]}. Which entry is overwritten first? Which later calculation reads that changed entry as if it were still a child?
 \end{definitionblock}
 {\small\color{BootcampBlueDark}\textbf{Repair:} Change only the inner-loop header.}
 \end{frame}
@@ -968,7 +968,7 @@ double PriceByCRR(double S0, double U, double D,
 \begin{columns}[T,onlytextwidth]
 \begin{column}{0.48\textwidth}
 \begin{propositionblock}{Shared example}
-$N=2$ returns approximately $20.4545$ for $S_0=100$, $U=1.2$, $D=0.8$, $R=1.1$, $K=100$.
+$N=8$ returns approximately $21.68$ for $S_0=106$, $U=1.15125$, $D=0.86862$, $R=1.00545$, $K=100$.
 \end{propositionblock}
 \end{column}
 \begin{column}{0.48\textwidth}
@@ -979,7 +979,42 @@ At any moment, the active prefix of \texttt{Price} represents one complete time 
 \end{columns}
 \end{frame}
 
-% FRAME 34 -- tests
+% FRAME 34 -- Lecture 2 driver program
+\begin{frame}[fragile]{OptionPricer01.cpp runs the Lecture 2 example}
+\begin{columns}[T,onlytextwidth]
+\begin{column}{0.67\textwidth}
+\begin{lstlisting}[style=tinycpp]
+#include "BinomialTreeModel.h"
+#include "Option01.h"
+#include <iostream>
+#include <iomanip>
+
+int main()
+{
+    double u = 1.15125, d = 0.86862;
+    double r = 1.00545, s0 = 106.00;
+    double k = 100.00;
+    const int N = 8;
+    double optionPrice =
+        fre::PriceByCRR(s0, u, d, r, N, k);
+    std::cout << "European call option price = "
+              << std::fixed << std::setprecision(2)
+              << optionPrice << std::endl;
+    return 0;
+}
+\end{lstlisting}
+\end{column}
+\begin{column}{0.30\textwidth}
+\small
+\begin{propositionblock}{Expected output}
+\texttt{European call option price = 21.68}
+\end{propositionblock}
+\explain{Same file roles}{The model helpers live in \texttt{BinomialTreeModel}; the payoff and pricer live in \texttt{Option01}.}
+\end{column}
+\end{columns}
+\end{frame}
+
+% FRAME 35 -- tests
 \begin{frame}{Tests should target boundaries and invariants}
 \scriptsize
 \begin{center}
@@ -988,11 +1023,11 @@ At any moment, the active prefix of \texttt{Price} represents one complete time 
 \toprule
 Case & Change & Expected observation & Bug targeted \\
 \midrule
-Baseline & $S_0=100,U=1.2,D=.8,R=1.1,K=100,N=2$ & $20.4545$ & full data flow \\
+Lecture example & $S_0=106,U=1.15125,D=.86862,R=1.00545,K=100,N=8$ & $21.68$ & full data flow \\
 At strike & call payoff $z=K=100$ & $0$ & payoff boundary \\
 No-arbitrage edge & $R=D$ & rejected & wrong inequality \\
 Capacity edge & $N=9$ with \texttt{SIZE=9} & rejected & out-of-bounds write \\
-Zero strike & set $K=0$ & equal to $S_0$ & discount/update error \\
+Zero strike & set $K=0$ & equal to $S_0=106$ & discount/update error \\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -1001,7 +1036,7 @@ Zero strike & set $K=0$ & equal to $S_0$ & discount/update error \\
 \end{propositionblock}
 \end{frame}
 
-% FRAME 35 -- close
+% FRAME 36 -- core close
 \begin{frame}{One algorithm now has a line-by-line explanation}
 \begin{columns}[c,onlytextwidth]
 \begin{column}{0.46\textwidth}
@@ -1026,6 +1061,259 @@ Return \texttt{Price[0]}
 \end{propositionblock}
 \medskip
 If you can answer all three, you can debug the pricer rather than merely rerun it.
+\end{column}
+\end{columns}
+\end{frame}
+
+% RESERVE PRACTICE -- adapted directly from Recitation 1 Deck 5.
+\begin{frame}{Additional practice reuses the same coding habits}
+\begin{columns}[c,onlytextwidth]
+\begin{column}{0.46\textwidth}
+\begin{definitionblock}{For each problem}
+\begin{enumerate}
+\item Trace the example by hand.
+\item Complete the function.
+\item Test one boundary case.
+\item Explain the loop invariant.
+\end{enumerate}
+\end{definitionblock}
+\end{column}
+\begin{column}{0.50\textwidth}
+\begin{illustrationblock}{Choose a useful next challenge}
+Count and accumulate first, then move to nested loops or a one-pass financial algorithm.
+\end{illustrationblock}
+\medskip
+These problems come from Recitation 1 Deck 5 and can be used in class or after the core CRR lab.
+\smallskip\par
+{\small Use \texttt{<vector>}; the last two solutions also use \texttt{<algorithm>}.}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}[fragile]{Practice 01 | Count positive values -- Problem}
+\problemmeta{Counter + condition}{Complete the function}
+Return how many elements of an integer vector are strictly positive. Zero does not count.
+\begin{definitionblock}{Examples}
+\texttt{[-2, 0, 5, 3, -1]} $\to$ \texttt{2}\qquad
+\texttt{[0, -4]} $\to$ \texttt{0}
+\end{definitionblock}
+\begin{lstlisting}[style=tinycpp]
+int countPositive(const std::vector<int>& nums)
+{
+    int count = /* ? */;
+    for (int i = 0; i < static_cast<int>(nums.size()); ++i)
+    {
+        if (/* current value is positive */)
+        {
+            /* update count */;
+        }
+    }
+    return /* ? */;
+}
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Practice 01 | Count positive values -- Solution}
+\begin{columns}[T,onlytextwidth]
+\begin{column}{0.61\textwidth}
+\begin{lstlisting}[style=solutioncpp]
+int countPositive(const std::vector<int>& nums)
+{
+    int count = 0;
+    int n = static_cast<int>(nums.size());
+    for (int i = 0; i < n; ++i)
+    {
+        if (nums[i] > 0)
+        {
+            ++count;
+        }
+    }
+    return count;
+}
+\end{lstlisting}
+\end{column}
+\begin{column}{0.36\textwidth}
+\small
+\explain{Invariant}{\texttt{count} equals the number of positive values already visited.}
+\explain{Boundary}{An empty vector returns zero because the loop never runs.}
+\explain{Cost}{$O(n)$ time and $O(1)$ extra space.}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}[fragile]{Practice 02 | Running sum -- Problem}
+\problemmeta{Accumulate a result}{Complete the function}
+Return a vector whose value at index $i$ is the sum of inputs from index $0$ through $i$.
+\begin{definitionblock}{Example}
+\texttt{[2, 1, 3, 4]} $\to$ \texttt{[2, 3, 6, 10]}
+\end{definitionblock}
+\begin{lstlisting}[style=tinycpp]
+std::vector<int> runningSum(const std::vector<int>& nums)
+{
+    int n = static_cast<int>(nums.size());
+    std::vector<int> result(n);
+    int total = /* ? */;
+    for (int i = 0; i < n; ++i)
+    {
+        /* update total */;
+        result[i] = /* ? */;
+    }
+    return result;
+}
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Practice 02 | Running sum -- Solution}
+\begin{columns}[T,onlytextwidth]
+\begin{column}{0.61\textwidth}
+\begin{lstlisting}[style=solutioncpp]
+std::vector<int> runningSum(
+    const std::vector<int>& nums)
+{
+    int n = static_cast<int>(nums.size());
+    std::vector<int> result(n);
+    int total = 0;
+    for (int i = 0; i < n; ++i)
+    {
+        total += nums[i];
+        result[i] = total;
+    }
+    return result;
+}
+\end{lstlisting}
+\end{column}
+\begin{column}{0.36\textwidth}
+\small
+\explain{Invariant}{After index $i$, \texttt{total} equals \texttt{nums[0]+...+nums[i]}.}
+\explain{Reuse}{The next iteration adds one value instead of recomputing the prefix.}
+\explain{Cost}{$O(n)$ time and $O(n)$ output space.}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}[fragile]{Practice 03 | Richest customer -- Problem}
+\problemmeta{Nested loops + maximum}{Complete the resets and updates}
+Each row contains one customer's balances. Return the largest row total.
+\smallskip\par
+\textbf{Example:} \texttt{[[2, 3], [1, 8], [4, 4]]} $\to$ \texttt{9}
+\begin{lstlisting}[style=tinycpp]
+int maximumWealth(
+    const std::vector<std::vector<int>>& accounts)
+{
+    int best = 0;
+    for (int r = 0; r < static_cast<int>(accounts.size()); ++r)
+    {
+        int total = /* reset for this row */;
+        for (int c = 0; c < static_cast<int>(accounts[r].size()); ++c)
+        {
+            /* add one balance */;
+        }
+        best = /* keep the larger value */;
+    }
+    return best;
+}
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Practice 03 | Richest customer -- Solution}
+\begin{columns}[T,onlytextwidth]
+\begin{column}{0.63\textwidth}
+\begin{lstlisting}[style=tinycpp]
+int maximumWealth(
+    const std::vector<std::vector<int>>& accounts)
+{
+    int best = 0;
+    int rows = static_cast<int>(accounts.size());
+    for (int r = 0; r < rows; ++r)
+    {
+        int total = 0;
+        int banks = static_cast<int>(accounts[r].size());
+        for (int c = 0; c < banks; ++c)
+        {
+            total += accounts[r][c];
+        }
+        best = std::max(best, total);
+    }
+    return best;
+}
+\end{lstlisting}
+\end{column}
+\begin{column}{0.34\textwidth}
+\small
+\explain{Inner loop}{Computes one customer's total.}
+\explain{Outer loop}{Compares that total with the best completed row.}
+\explain{Critical reset}{\texttt{total = 0} belongs inside the outer loop.}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}[fragile]{Practice 04 | Best time to trade -- Problem}
+\problemmeta{Track the best value so far}{Complete one pass}
+Return the maximum profit from one buy followed by one later sell. Return zero when no profitable trade exists.
+{\small Assume the vector contains at least one price.\par}
+\smallskip\par
+\textbf{Examples:} \texttt{[7,1,5,3,6,4]} $\to$ \texttt{5}\qquad
+\texttt{[7,6,4,3,1]} $\to$ \texttt{0}
+\begin{lstlisting}[style=tinycpp]
+int maxProfit(const std::vector<int>& prices)
+{
+    int minPrice = prices[0];
+    int best = 0;
+    for (int i = 1; i < static_cast<int>(prices.size()); ++i)
+    {
+        int profit = /* sell today */;
+        best = /* best profit so far */;
+        minPrice = /* cheapest price so far */;
+    }
+    return best;
+}
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Practice 04 | Best time to trade -- Solution}
+\begin{columns}[T,onlytextwidth]
+\begin{column}{0.61\textwidth}
+\begin{lstlisting}[style=solutioncpp]
+int maxProfit(const std::vector<int>& prices)
+{
+    int n = static_cast<int>(prices.size());
+    int minPrice = prices[0];
+    int best = 0;
+    for (int i = 1; i < n; ++i)
+    {
+        int profit = prices[i] - minPrice;
+        best = std::max(best, profit);
+        minPrice = std::min(minPrice, prices[i]);
+    }
+    return best;
+}
+\end{lstlisting}
+\end{column}
+\begin{column}{0.36\textwidth}
+\small
+\explain{Invariant}{Before day $i$, \texttt{minPrice} is the cheapest earlier price.}
+\explain{Order matters}{Evaluate today's sale before adding today's price to the past.}
+\explain{Cost}{$O(n)$ time and $O(1)$ extra space.}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{The same habits transfer beyond CRR}
+\begin{columns}[T,onlytextwidth]
+\begin{column}{0.47\textwidth}
+\begin{definitionblock}{State a loop invariant}
+Name what each accumulator, index, or active array prefix means before and after an iteration.
+\end{definitionblock}
+\begin{definitionblock}{Protect boundaries}
+Test empty inputs, equality cases, first and last indices, and invalid model parameters.
+\end{definitionblock}
+\end{column}
+\begin{column}{0.49\textwidth}
+\begin{propositionblock}{Explain before optimizing}
+A correct explanation connects the specification, the stored state, the update, and a test that could falsify the code.
+\end{propositionblock}
+\medskip
+That is the common skill behind every exercise in this deck.
 \end{column}
 \end{columns}
 \end{frame}
