@@ -1,0 +1,89 @@
+FRE6883 -- Financial Computation
+Recitation 3: Pointers, Function Pointers, and a Generic CRR Pricer
+
+AUDIENCE BASELINE
+Students have completed Lecture 3 and the previous CRR recitation. They have
+seen raw pointers, arrays, dynamic allocation, function pointers, call and put
+payoffs, and function overloading. This session emphasizes retrieval, tracing,
+lifetime reasoning, code completion, and reuse of one pricing algorithm.
+
+SESSION OUTCOME
+By the end, students can trace pointer expressions, distinguish address and
+value comparisons, use call-by-pointer safely, explain const placement, pair
+new/new[] with delete/delete[], diagnose invalid pointer lifetimes, and pass a
+payoff function into PriceByCRR to price several European claims.
+
+FORMAT
+47 core Beamer frames, approximately 100 minutes. Sixteen guided activities
+alternate a problem slide with a solution or explanation slide. Ten additional
+slides at the end contain four LeetCode-style brainteasers and solutions. The
+first brainteaser may be used as the final in-class challenge; the remaining
+three are reserve practice.
+
+TIMING
+00:00-00:05  Opening and the address-to-behavior roadmap                5 min
+00:05-00:18  Pointer basics, dereferencing, and aliasing               13 min
+00:18-00:31  Arrays, pointer arithmetic, and comparisons               13 min
+00:31-00:43  Call by pointer: getNum and MySwap                        12 min
+00:43-00:52  Pointer-to-const and const-pointer declarations            9 min
+00:52-01:06  Dynamic allocation, cleanup, and lifetime failures        14 min
+01:06-01:18  Function pointer syntax and invocation                    12 min
+01:18-01:34  Generic CRR for call, put, and digital payoffs            16 min
+01:34-01:38  Function overloading and synthesis                         4 min
+01:38-01:40  Begin Brainteaser 01                                       2 min
+Total                                                               100 min
+
+LECTURE 3 COVERAGE
+- Address operator &, pointer declaration, and dereference operator *.
+- Aliasing and pointer type compatibility.
+- Relationship between arrays and pointers; four equivalent access forms.
+- Pointer arithmetic: +, +=, ++, --, and subtraction within one array.
+- Address comparison versus pointed-to value comparison.
+- Pointer initialization with nullptr and safe dereference preconditions.
+- Pointer parameters and call by pointer through getNum and MySwap.
+- Pointer to const, const pointer, and const pointer to const.
+- Dynamic scalar and array allocation with new and new[].
+- Matching delete and delete[]; leaks, dangling pointers, and null dereference.
+- Returning pointers and the getNum1/getNum2/getNum3/getNum4 lifetime audit.
+- Function pointer declaration, assignment, and invocation.
+- PriceByCRR with a payoff-function parameter and dynamically allocated result.
+- CallPayoff, PutPayoff, DigitCallPayoff, and DigitPutPayoff.
+- Caller ownership and cleanup in OptionPricer02.cpp.
+- Function overloading for the two GetInputData parameter lists.
+- Procedural decomposition: data and behavior flow through small functions.
+
+GUIDED ACTIVITIES
+1. Complete address and dereference operations.
+2. Trace two aliases to the same price.
+3. Express one array access in four equivalent ways.
+4. Trace pointer movement and pointer subtraction.
+5. Distinguish address equality from value equality.
+6. Complete Lecture 3 getNum call by pointer.
+7. Complete Lecture 3 MySwap.
+8. Decide which const-pointer operations compile.
+9. Allocate, use, and release one dynamic double.
+10. Allocate and release a dynamically sized payoff row.
+11. Classify the four Lecture 3 getNum lifetime examples.
+12. Complete a function pointer declaration and invocation.
+13. Add a payoff function pointer to PriceByCRR.
+14. Complete call and put payoff functions.
+15. Price call and put options and release both returned arrays.
+16. Add digital call and put strategies without changing PriceByCRR.
+
+BRAINTEASERS
+- Reverse a raw array in place with two pointers.
+- Compact non-zero values in place and return the new logical end pointer.
+- Find a target sum in a sorted raw array with const pointers.
+- Return a selected payoff function and guard against nullptr.
+
+TECHNICAL NOTES
+- The CRR examples use the Lecture 3 parameters S0=106, U=1.15125,
+  D=0.86862, R=1.00545, N=8, and K=100. Expected values are call=21.68
+  and put=11.43.
+- The deck intentionally uses raw memory ownership because that is the subject
+  of Lecture 3. A short note explains that production C++ normally prefers
+  containers and smart pointers.
+- All pointer arithmetic examples remain within one array or its one-past-end
+  sentinel. No code dereferences the one-past-end pointer.
+- Problem and solution slides are separate so the instructor can stop before
+  revealing the implementation.

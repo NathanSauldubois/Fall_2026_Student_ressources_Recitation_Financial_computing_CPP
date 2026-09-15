@@ -1,0 +1,1291 @@
+% !TEX program = pdflatex
+% FRE6883 Recitation 3 -- Pointers, Function Pointers, and Generic CRR
+\documentclass[10pt,aspectratio=169]{beamer}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[english]{babel}
+\usepackage{lmodern}
+\usepackage{microtype}
+\DisableLigatures{encoding=*,family=tt*}
+\usepackage{amsmath,amssymb,bm,mathtools}
+\usepackage{booktabs}
+\usepackage{multicol}
+\usepackage{changepage}
+\usepackage{graphicx}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,calc,decorations.pathreplacing}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+
+\usetheme[numbering=fraction,progressbar=frametitle]{metropolis}
+\setbeamertemplate{frame numbering}[fraction]
+\setbeamertemplate{navigation symbols}{}
+
+\definecolor{BootcampBlueDark}{HTML}{1A3C68}
+\definecolor{BootcampBlue}{RGB}{31,110,178}
+\definecolor{AccentGold}{HTML}{DAA520}
+\definecolor{SoftGray}{RGB}{245,246,248}
+\definecolor{TextBlack}{HTML}{000000}
+\definecolor{Crimson}{HTML}{990000}
+\definecolor{MatrixGreen}{HTML}{228B22}
+\definecolor{MatrixRed}{HTML}{B22222}
+
+\setbeamercolor{normal text}{fg=TextBlack,bg=white}
+\setbeamercolor{title}{fg=TextBlack}
+\setbeamercolor{structure}{fg=BootcampBlueDark}
+\setbeamercolor{progress bar}{fg=BootcampBlueDark,bg=gray!30}
+\setbeamercolor{frametitle}{bg=BootcampBlueDark,fg=white}
+\setbeamerfont{frametitle}{series=\bfseries,size=\large}
+\setbeamertemplate{frametitle}{
+  \nointerlineskip
+  \begin{beamercolorbox}[wd=\paperwidth,ht=3.2ex,dp=1.4ex,leftskip=1em,rightskip=1em]{frametitle}
+    \usebeamerfont{frametitle}\insertframetitle
+  \end{beamercolorbox}
+}
+
+\setbeamercolor{block title example}{bg=BootcampBlueDark!90!black,fg=white}
+\setbeamercolor{block body example}{bg=BootcampBlueDark!5!white,fg=black}
+\setbeamercolor{block title proposition}{bg=MatrixGreen!75!black,fg=white}
+\setbeamercolor{block body proposition}{bg=MatrixGreen!7!white,fg=black}
+\setbeamercolor{block title illustration}{bg=AccentGold!85!black,fg=white}
+\setbeamercolor{block body illustration}{bg=AccentGold!10!white,fg=black}
+\setbeamercolor{block title proof}{bg=gray!70!black,fg=white}
+\setbeamercolor{block body proof}{bg=SoftGray,fg=black}
+\setbeamertemplate{blocks}[rounded][shadow=false]
+
+\newenvironment{definitionblock}[1]{%
+  \par\vspace{0.3em}%
+  \begin{beamercolorbox}[wd=\textwidth,sep=0.35em,leftskip=0.3em,rightskip=0.6em,rounded=false,shadow=false]{block title example}%
+  \raisebox{0.15em}{\usebeamerfont{block title example}#1}%
+  \end{beamercolorbox}\vspace{-0.4em}%
+  \begin{beamercolorbox}[wd=\textwidth,sep=0.55em,leftskip=0.6em,rightskip=0.6em,rounded=false,shadow=false]{block body example}%
+  \usebeamerfont{block body example}%
+}{\end{beamercolorbox}\par\vspace{0.45em}}
+
+\newenvironment{propositionblock}[1]{%
+  \par\vspace{0.3em}%
+  \begin{beamercolorbox}[wd=\textwidth,sep=0.35em,leftskip=0.3em,rightskip=0.6em,rounded=false,shadow=false]{block title proposition}%
+  \raisebox{0.15em}{\usebeamerfont{block title example}#1}%
+  \end{beamercolorbox}\vspace{-0.4em}%
+  \begin{beamercolorbox}[wd=\textwidth,sep=0.55em,leftskip=0.6em,rightskip=0.6em,rounded=false,shadow=false]{block body proposition}%
+  \usebeamerfont{block body example}%
+}{\end{beamercolorbox}\par\vspace{0.45em}}
+
+\newenvironment{illustrationblock}[1]{%
+  \par\vspace{0.3em}%
+  \begin{beamercolorbox}[wd=\textwidth,sep=0.35em,leftskip=0.3em,rightskip=0.6em,rounded=false,shadow=false]{block title illustration}%
+  \raisebox{0.15em}{\usebeamerfont{block title example}#1}%
+  \end{beamercolorbox}\vspace{-0.4em}%
+  \begin{beamercolorbox}[wd=\textwidth,sep=0.55em,leftskip=0.6em,rightskip=0.6em,rounded=false,shadow=false]{block body illustration}%
+  \usebeamerfont{block body example}%
+}{\end{beamercolorbox}\par\vspace{0.45em}}
+
+\newenvironment{proofblock}[1]{%
+  \par\vspace{0.3em}%
+  \begin{beamercolorbox}[wd=\textwidth,sep=0.35em,leftskip=0.3em,rightskip=0.6em,rounded=false,shadow=false]{block title proof}%
+  \raisebox{0.15em}{\usebeamerfont{block title example}#1}%
+  \end{beamercolorbox}\vspace{-0.4em}%
+  \begin{beamercolorbox}[wd=\textwidth,sep=0.55em,leftskip=0.6em,rightskip=0.6em,rounded=false,shadow=false]{block body proof}%
+  \usebeamerfont{block body example}%
+}{\end{beamercolorbox}\par\vspace{0.45em}}
+
+\usepackage{listings}
+\usepackage{textcomp}
+\lstdefinestyle{coursecpp}{
+  language=C++,basicstyle=\ttfamily\fontsize{9.1}{10.4}\selectfont,
+  keywordstyle=\color{blue},commentstyle=\color{MatrixGreen},stringstyle=\color{Crimson},
+  showstringspaces=false,columns=fullflexible,keepspaces=true,tabsize=4,
+  breaklines=false,frame=none,aboveskip=0.25em,belowskip=0.25em,upquote=true
+}
+\lstdefinestyle{solutioncpp}{style=coursecpp,basicstyle=\ttfamily\fontsize{8.3}{9.4}\selectfont}
+\lstdefinestyle{tinycpp}{style=coursecpp,basicstyle=\ttfamily\fontsize{7.5}{8.5}\selectfont}
+\lstset{style=coursecpp}
+\setbeamercovered{invisible}
+\setlength{\parskip}{0.1em}
+
+\newcommand{\problemmeta}[2]{{\color{BootcampBlue}\small\textbf{GUIDED CODE}\quad #1\hfill #2}\par\smallskip\small}
+\newcommand{\explain}[2]{{\color{BootcampBlueDark}\textbf{#1}}\par #2\par\medskip}
+
+\setbeamertemplate{frame footer}{\scriptsize FRE6883 | Recitation 3 | Pointers and Generic CRR}
+\title{Pointers, Function Pointers, and a Generic CRR Pricer}
+\author{}
+\date{}
+
+% 45 core frames for approximately 100 minutes, followed by reserve brainteasers.
+% Source baseline: Lecture 3, Topic 3, slides 2--47.
+\begin{document}
+
+% FRAME 1
+\begin{frame}[plain]
+\vfill
+{\usebeamerfont{title}\inserttitle\par}
+\medskip
+{\color{BootcampBlueDark}\rule{0.95\textwidth}{0.8pt}}
+\bigskip
+{\Large FRE6883 -- Recitation 3\par}
+\medskip
+Trace the address, protect the lifetime, choose the payoff
+\vfill
+\end{frame}
+
+% FRAME 2
+\begin{frame}{One address lets us change data and behavior}
+\begin{columns}[c,onlytextwidth]
+\begin{column}{0.46\textwidth}
+\centering
+Variable address $\rightarrow$ pointer\par
+$\downarrow$\par
+Arrays and pointer arithmetic\par
+$\downarrow$\par
+Dynamic memory and ownership\par
+$\downarrow$\par
+Function address $\rightarrow$ payoff strategy
+\end{column}
+\begin{column}{0.50\textwidth}
+\begin{propositionblock}{By the end}
+You can trace a pointer expression, identify unsafe lifetime behavior, and reuse one CRR engine for calls, puts, and digital payoffs.
+\end{propositionblock}
+\medskip
+Every code activity follows an example from Lecture 3, then asks for one prediction or safety check.
+\end{column}
+\end{columns}
+\end{frame}
+
+% FRAME 3
+\begin{frame}[fragile]{A pointer stores where a value lives}
+\begin{columns}[T,onlytextwidth]
+\begin{column}{0.56\textwidth}
+\begin{lstlisting}
+double dPrice = 21.68;
+double* dPtr = &dPrice;
+
+std::cout << dPtr;   // an address
+std::cout << *dPtr;  // 21.68
+\end{lstlisting}
+\end{column}
+\begin{column}{0.40\textwidth}
+\small
+\explain{\texttt{\&dPrice}}{The address of the variable.}
+\explain{\texttt{double* dPtr}}{A pointer that may point to a \texttt{double}.}
+\explain{\texttt{*dPtr}}{Dereference the pointer: access the value at that address.}
+\end{column}
+\end{columns}
+\begin{illustrationblock}{Keep the two meanings of \texttt{*} separate}
+In a declaration, \texttt{*} introduces a pointer. In an expression, \texttt{*} follows the stored address.
+\end{illustrationblock}
+\end{frame}
+
+% FRAME 4
+\begin{frame}[fragile]{01 | Complete the address and dereference operations -- Problem}
+\problemmeta{Pointer basics}{Predict before compiling}
+\begin{lstlisting}
+double dPrice = 21.68;
+double* dPtr = /* address of dPrice */;
+
+std::cout << /* print the address */ << std::endl;
+std::cout << /* print 21.68 */ << std::endl;
+
+/* change dPrice through dPtr */ = 24.50;
+std::cout << dPrice << std::endl;
+\end{lstlisting}
+\begin{definitionblock}{Expected final output}
+The last line prints \texttt{24.5}. Explain why no assignment to the name \texttt{dPrice} was needed.
+\end{definitionblock}
+\end{frame}
+
+% FRAME 5
+\begin{frame}[fragile]{01 | Complete the address and dereference operations -- Solution}
+\begin{columns}[T,onlytextwidth]
+\begin{column}{0.61\textwidth}
+\begin{lstlisting}[style=solutioncpp]
+double dPrice = 21.68;
+double* dPtr = &dPrice;
+
+std::cout << dPtr << std::endl;
+std::cout << *dPtr << std::endl;
+
+*dPtr = 24.50;
+std::cout << dPrice << std::endl;
+\end{lstlisting}
+\end{column}
+\begin{column}{0.35\textwidth}
+\small
+\explain{Alias}{\texttt{dPtr} and \texttt{dPrice} give two access paths to the same object.}
+\explain{Type check}{A \texttt{double*} must point to a \texttt{double}.}
+\explain{Address output}{The hexadecimal-looking address is machine- and run-dependent.}
+\end{column}
+\end{columns}
+\end{frame}
+
+% FRAME 6
+\begin{frame}[fragile]{02 | Trace two aliases to one price -- Problem}
+\problemmeta{Aliasing}{Fill the three outputs}
+\begin{lstlisting}
+double price = 100.0;
+double* p = &price;
+double* q = p;
+
+*p += 5.0;
+std::cout << price << " ";      // _____
+
+*q *= 1.10;
+std::cout << *p << " ";         // _____
+std::cout << (p == q) << "\n"; // _____
+\end{lstlisting}
+\begin{illustrationblock}{Question}
+Are there one, two, or three \texttt{double} objects in this example?
+\end{illustrationblock}
+\end{frame}
+
+% FRAME 7
+\begin{frame}[fragile]{02 | Trace two aliases to one price -- Solution}
+\begin{lstlisting}[style=solutioncpp]
+*p += 5.0;   // price is 105.0
+*q *= 1.10;  // the same price is 115.5
+
+// Output: 105 115.5 1
+\end{lstlisting}
+\begin{columns}[T,onlytextwidth]
+\begin{column}{0.48\textwidth}
+\begin{definitionblock}{One object}
+There is one \texttt{double} and two pointer variables. Both pointers store the same address.
+\end{definitionblock}
+\end{column}
+\begin{column}{0.48\textwidth}
+\begin{propositionblock}{Debugging consequence}
+A write through either alias changes what every other alias observes.
+\end{propositionblock}
+\end{column}
+\end{columns}
+\end{frame}
+
+% FRAME 8
+\begin{frame}[fragile]{An array name identifies its first element}
+\begin{columns}[T,onlytextwidth]
+\begin{column}{0.57\textwidth}
+\begin{lstlisting}
+int values[] = {2, 4, 6};
+int* ptr = values;
+
+values[0]     // 2
+*values       // 2
+ptr[1]        // 4
+*(ptr + 2)    // 6
+\end{lstlisting}
+\end{column}
+\begin{column}{0.39\textwidth}
+\small
+\explain{Key equivalence}{\texttt{values[i]} means \texttt{*(values + i)}.}
+\explain{Scaled movement}{Adding one moves by one element, not one byte.}
+\explain{No guardrail}{Raw array access performs no bounds checking.}
+\end{column}
+\end{columns}
+\end{frame}
+
+% FRAME 9
+\begin{frame}[fragile]{03 | Write the same array access four ways -- Problem}
+\problemmeta{Arrays and pointers}{Make every line assign 12 to index 2}
+\begin{lstlisting}
+int values[] = {2, 4, 6};
+int* ptr = values;
+
+values[/* ? */] = 12;
+ptr[/* ? */] = 12;
+*(values + /* ? */) = 12;
+*(ptr + /* ? */) = 12;
+\end{lstlisting}
+\begin{definitionblock}{Constraint}
+Do not change the operators. Only complete the four indices or offsets.
+\end{definitionblock}
+\end{frame}
+
+% FRAME 10
+\begin{frame}[fragile]{03 | Write the same array access four ways -- Solution}
+\begin{lstlisting}[style=solutioncpp]
+values[2] = 12;
+ptr[2] = 12;
+*(values + 2) = 12;
+*(ptr + 2) = 12;
+\end{lstlisting}
+\begin{propositionblock}{The compiler sees the same location}
+All four expressions target the third \texttt{int}. Choose array notation for readability; understand pointer notation so you can trace lower-level code.
+\end{propositionblock}
+\begin{illustrationblock}{Boundary check}
+\texttt{values[3]} compiles, but it accesses outside this three-element array: the behavior is undefined.
+\end{illustrationblock}
+\end{frame}
+
+% FRAME 11
+\begin{frame}[fragile]{Parentheses decide whether we move or add}
+\begin{columns}[T,onlytextwidth]
+\begin{column}{0.54\textwidth}
+\begin{lstlisting}
+int values[] = {2, 4, 6};
+int* ptr = values;
+
+*(ptr + 1)  // 4
+*ptr + 1    // 3
+\end{lstlisting}
+\end{column}
+\begin{column}{0.42\textwidth}
+\begin{definitionblock}{Move, then dereference}
+\texttt{*(ptr + 1)} selects the next element.
+\end{definitionblock}
+\begin{definitionblock}{Dereference, then add}
+\texttt{*ptr + 1} reads the first value and adds one to it.
+\end{definitionblock}
+\end{column}
+\end{columns}
+\end{frame}
+
+% FRAME 12
+\begin{frame}[fragile]{04 | Trace pointer arithmetic without running it -- Problem}
+\problemmeta{Movement and distance}{Complete the outputs}
+\begin{lstlisting}
+int values[] = {2, 4, 6};
+int* ptr = values;
+
+std::cout << *(++ptr) << " "; // _____
+ptr += 1;
+std::cout << *ptr << " ";     // _____
+std::cout << ptr - values;     // _____
+\end{lstlisting}
+\begin{illustrationblock}{Invariant}
+At every step, state the index at which \texttt{ptr} points before stating the value.
+\end{illustrationblock}
+\end{frame}
+
+% FRAME 13
+\begin{frame}[fragile]{04 | Trace pointer arithmetic without running it -- Solution}
+\begin{lstlisting}[style=solutioncpp]
+std::cout << *(++ptr) << " "; // ptr -> values[1], prints 4
+ptr += 1;                     // ptr -> values[2]
+std::cout << *ptr << " ";     // prints 6
+std::cout << ptr - values;    // prints 2
+\end{lstlisting}
+\begin{definitionblock}{Pointer subtraction}
+For two pointers into the same array, subtraction reports the number of elements between them.
+\end{definitionblock}
+\begin{propositionblock}{Output}
+\texttt{4 6 2}
+\end{propositionblock}
+\end{frame}
+
+% FRAME 14
+\begin{frame}[fragile]{Comparing pointers is different from comparing values}
+\begin{lstlisting}
+if (p == q)      // same address?
+if (*p == *q)    // same pointed-to value?
+\end{lstlisting}
+\begin{columns}[T,onlytextwidth]
+\begin{column}{0.48\textwidth}
+\begin{definitionblock}{Address equality}
+\texttt{p == q} asks whether the two pointers identify the same object.
+\end{definitionblock}
+\end{column}
+\begin{column}{0.48\textwidth}
+\begin{definitionblock}{Value equality}
+\texttt{*p == *q} dereferences both pointers and compares the two values.
+\end{definitionblock}
+\end{column}
+\end{columns}
+\end{frame}
+
+% FRAME 15
+\begin{frame}[fragile]{05 | Predict address equality and value equality -- Problem}
+\problemmeta{Pointer comparison}{Fill both booleans}
+\begin{lstlisting}
+int x = 7;
+int y = 7;
+int* p = &x;
+int* q = &y;
+
+std::cout << (p == q) << " ";   // _____
+std::cout << (*p == *q) << "\n"; // _____
+\end{lstlisting}
+\begin{illustrationblock}{Explain before revealing}
+The integers begin with equal values, but they are distinct objects.
+\end{illustrationblock}
+\end{frame}
+
+% FRAME 16
+\begin{frame}[fragile]{05 | Predict address equality and value equality -- Solution}
+\begin{lstlisting}[style=solutioncpp]
+std::cout << (p == q) << " ";    // 0: distinct addresses
+std::cout << (*p == *q) << "\n"; // 1: equal values
+\end{lstlisting}
+\begin{propositionblock}{Output}
+\texttt{0 1}
+\end{propositionblock}
+\begin{illustrationblock}{Safety precondition}
+Only dereference a pointer when it points to a live object. Comparing a pointer with \texttt{nullptr} does not dereference it.
+\end{illustrationblock}
+\end{frame}
+
+% FRAME 17
+\begin{frame}[fragile]{A pointer parameter can modify the caller's object}
+\begin{columns}[T,onlytextwidth]
+\begin{column}{0.55\textwidth}
+\begin{lstlisting}
+void getNum(int* ptr)
+{
+    std::cin >> *ptr;
+}
+
+int n = 1;
+getNum(&n);
+\end{lstlisting}
+\end{column}
+\begin{column}{0.41\textwidth}
+\small
+\explain{At the call}{\texttt{\&n} passes the address of the caller's integer.}
+\explain{Inside}{\texttt{*ptr} accesses that integer.}
+\explain{Effect}{The assignment changes \texttt{n}, just as a non-const reference parameter would.}
+\end{column}
+\end{columns}
+\end{frame}
+
+% FRAME 18
+\begin{frame}[fragile]{06 | Complete call by pointer -- Problem}
+\problemmeta{Lecture 3 \texttt{getNum}}{Make the caller observe 9}
+\begin{lstlisting}
+void getNum(int* ptr)
+{
+    std::cin >> /* pointed-to integer */;
+}
+
+int main()
+{
+    int number = 1;
+    getNum(/* address of number */);
+    std::cout << number << std::endl;
+}
+\end{lstlisting}
+\begin{definitionblock}{Input}
+If the user enters \texttt{9}, the program must print \texttt{9}.
+\end{definitionblock}
+\end{frame}
+
+% FRAME 19
+\begin{frame}[fragile]{06 | Complete call by pointer -- Solution}
+\begin{lstlisting}[style=solutioncpp]
+void getNum(int* ptr)
+{
+    std::cin >> *ptr;
+}
+
+int number = 1;
+getNum(&number);
+\end{lstlisting}
+\begin{columns}[T,onlytextwidth]
+\begin{column}{0.48\textwidth}
+\begin{definitionblock}{Contract}
+The pointer must not be \texttt{nullptr}; the function dereferences it immediately.
+\end{definitionblock}
+\end{column}
+\begin{column}{0.48\textwidth}
+\begin{propositionblock}{Reference comparison}
+\texttt{void getNum(int\& number)} expresses the same required-object relationship more directly.
+\end{propositionblock}
+\end{column}
+\end{columns}
+\end{frame}
+
+% FRAME 20
+\begin{frame}[fragile]{07 | Swap two caller-owned integers -- Problem}
+\problemmeta{Lecture 3 \texttt{MySwap}}{Complete three assignments}
+\begin{lstlisting}
+void MySwap(int* x, int* y)
+{
+    int temp = /* value pointed to by x */;
+    /* object x */ = /* value pointed to by y */;
+    /* object y */ = temp;
+}
+
+int a = 2, b = -3;
+MySwap(/* two addresses */);
+\end{lstlisting}
+\begin{definitionblock}{Postcondition}
+After the call, \texttt{a == -3} and \texttt{b == 2}.
+\end{definitionblock}
+\end{frame}
+
+% FRAME 21
+\begin{frame}[fragile]{07 | Swap two caller-owned integers -- Solution}
+\begin{lstlisting}[style=solutioncpp]
+void MySwap(int* x, int* y)
+{
+    int temp = *x;
+    *x = *y;
+    *y = temp;
+}
+
+int a = 2, b = -3;
+MySwap(&a, &b);
+\end{lstlisting}
+\begin{propositionblock}{Reason about effects}
+The pointer variables \texttt{x} and \texttt{y} are local copies of addresses, but dereferencing them reaches the caller's objects.
+\end{propositionblock}
+\end{frame}
+
+% FRAME 22
+\begin{frame}[fragile]{Read pointer declarations from right to left}
+\small
+\begin{center}
+\renewcommand{\arraystretch}{1.25}
+\begin{tabular}{@{}lll@{}}
+\toprule
+Declaration & Can move pointer? & Can change value through it? \\
+\midrule
+\texttt{double* p} & yes & yes \\
+\texttt{const double* p} & yes & no \\
+\texttt{double* const p = \&x} & no & yes \\
+\texttt{const double* const p = \&x} & no & no \\
+\bottomrule
+\end{tabular}
+\end{center}
+\begin{definitionblock}{Two different promises}
+\texttt{const} before the pointed-to type protects the value. \texttt{const} after \texttt{*} fixes the address stored in the pointer.
+\end{definitionblock}
+\end{frame}
+
+% FRAME 23
+\begin{frame}[fragile]{08 | Decide which operations compile -- Problem}
+\problemmeta{Pointer to const versus const pointer}{Mark valid or invalid}
+\begin{lstlisting}
+double x = 10.0, y = 20.0;
+const double* readOnly = &x;
+double* const fixed = &x;
+
+readOnly = &y;   // valid / invalid?
+*readOnly = 7.0; // valid / invalid?
+fixed = &y;      // valid / invalid?
+*fixed = 7.0;    // valid / invalid?
+\end{lstlisting}
+\begin{illustrationblock}{Reading trick}
+Ask two separate questions: may the address change, and may the pointed-to value change?
+\end{illustrationblock}
+\end{frame}
+
+% FRAME 24
+\begin{frame}[fragile]{08 | Decide which operations compile -- Solution}
+\begin{lstlisting}[style=solutioncpp]
+readOnly = &y;   // valid: pointer may move
+*readOnly = 7.0; // invalid: value is protected
+fixed = &y;      // invalid: pointer is fixed
+*fixed = 7.0;    // valid: x becomes 7.0
+\end{lstlisting}
+\begin{columns}[T,onlytextwidth]
+\begin{column}{0.48\textwidth}
+\begin{definitionblock}{Useful parameter}
+\texttt{const double* data} lets a function read an array while promising not to edit its elements.
+\end{definitionblock}
+\end{column}
+\begin{column}{0.48\textwidth}
+\begin{illustrationblock}{Important nuance}
+The original variable may still be mutable through another non-const access path.
+\end{illustrationblock}
+\end{column}
+\end{columns}
+\end{frame}
+
+% FRAME 25
+\begin{frame}{Dynamic memory has an explicit lifetime}
+\centering
+\Large
+\texttt{new / new[]} $\longrightarrow$ use the live object $\longrightarrow$ \texttt{delete / delete[]}
+\normalsize
+\vspace{1.3em}
+\begin{columns}[T,onlytextwidth]
+\begin{column}{0.47\textwidth}
+\begin{definitionblock}{Scalar}
+\texttt{double* p = new double;}\par
+Release with \texttt{delete p;}.
+\end{definitionblock}
+\end{column}
+\begin{column}{0.49\textwidth}
+\begin{definitionblock}{Array}
+\texttt{double* p = new double[n];}\par
+Release with \texttt{delete[] p;}.
+\end{definitionblock}
+\end{column}
+\end{columns}
+\begin{propositionblock}{Ownership question}
+Every successful allocation needs a clearly responsible owner that releases it exactly once.
+\end{propositionblock}
+\end{frame}
+
+% FRAME 26
+\begin{frame}[fragile]{09 | Allocate, use, and release one price -- Problem}
+\problemmeta{Dynamic scalar}{Complete the lifetime}
+\begin{lstlisting}
+double* price = /* allocate one double */;
+/* assign through the pointer */ = 21.68;
+std::cout << /* pointed-to value */ << std::endl;
+
+/* release scalar memory */;
+price = /* safe empty state */;
+\end{lstlisting}
+\begin{definitionblock}{Expected output}
+\texttt{21.68}
+\end{definitionblock}
+\end{frame}
+
+% FRAME 27
+\begin{frame}[fragile]{09 | Allocate, use, and release one price -- Solution}
+\begin{lstlisting}[style=solutioncpp]
+double* price = new double;
+*price = 21.68;
+std::cout << *price << std::endl;
+
+delete price;
+price = nullptr;
+\end{lstlisting}
+\begin{definitionblock}{After deletion}
+The dynamic object no longer exists. Setting the pointer to \texttt{nullptr} prevents this variable from continuing to look usable.
+\end{definitionblock}
+\begin{illustrationblock}{It does not repair aliases}
+Any other pointer that stored the old address is still dangling.
+\end{illustrationblock}
+\end{frame}
+
+% FRAME 28
+\begin{frame}[fragile]{10 | Build a dynamically sized payoff row -- Problem}
+\problemmeta{Dynamic array}{Match every bracket}
+\begin{lstlisting}
+int N = 3;
+double* payoff = new double[/* element count */];
+
+for (int i = 0; i <= N; ++i)
+{
+    payoff[i] = static_cast<double>(i * i);
+}
+
+std::cout << payoff[3] << std::endl;
+/* release array memory */;
+payoff = nullptr;
+\end{lstlisting}
+\end{frame}
+
+% FRAME 29
+\begin{frame}[fragile]{10 | Build a dynamically sized payoff row -- Solution}
+\begin{lstlisting}[style=solutioncpp]
+int N = 3;
+double* payoff = new double[N + 1];
+
+for (int i = 0; i <= N; ++i)
+{
+    payoff[i] = static_cast<double>(i * i);
+}
+
+std::cout << payoff[3] << std::endl; // 9
+delete[] payoff;
+payoff = nullptr;
+\end{lstlisting}
+\begin{propositionblock}{Pairing rule}
+\texttt{new[]} pairs with \texttt{delete[]}; scalar \texttt{new} pairs with scalar \texttt{delete}.
+\end{propositionblock}
+\end{frame}
+
+% FRAME 30
+\begin{frame}[fragile]{Leaks, dangling pointers, and invalid dereferences differ}
+\small
+\begin{center}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{@{}p{2.5cm}p{4.2cm}p{4.1cm}@{}}
+\toprule
+Failure & What happened & Prevention \\
+\midrule
+Memory leak & Last owning address is lost before \texttt{delete} & Preserve ownership; release once \\
+Dangling pointer & Pointer still stores an address after object lifetime ends & Stop using it; set owned pointer to \texttt{nullptr} \\
+Null dereference & Code evaluates \texttt{*p} when \texttt{p == nullptr} & Check the contract before dereferencing \\
+Wrong return & Function returns the address of a local object & Return by value or return live dynamic/caller data \\
+\bottomrule
+\end{tabular}
+\end{center}
+\begin{illustrationblock}{Modern C++ note}
+Lecture 3 teaches raw ownership directly. In production code, containers and smart pointers usually make the lifetime safer.
+\end{illustrationblock}
+\end{frame}
+
+% FRAME 31
+\begin{frame}[fragile]{11 | Classify four ways to return or modify a number -- Problem}
+\problemmeta{Lifetime audit from Lecture 3}{Safe, unsafe, or null?}
+\begin{lstlisting}[style=tinycpp]
+int* getNum1() { int n = 10; return &n; }
+int  getNum2() { int n = 10; return n + 1; }
+void getNum3(int* p) { *p += 1; }
+int* getNum4() {
+    int* p = new int{11};
+    delete p;
+    p = nullptr;
+    return p;
+}
+\end{lstlisting}
+\begin{definitionblock}{Task}
+For each function, state what it returns and whether the caller may safely dereference the result.
+\end{definitionblock}
+\end{frame}
+
+% FRAME 32
+\begin{frame}[fragile]{11 | Classify four ways to return or modify a number -- Solution}
+\small
+\begin{center}
+\renewcommand{\arraystretch}{1.22}
+\begin{tabular}{@{}p{1.7cm}p{3.0cm}p{5.8cm}@{}}
+\toprule
+Function & Result & Judgment \\
+\midrule
+\texttt{getNum1} & dangling address & unsafe: local \texttt{n} dies on return \\
+\texttt{getNum2} & value \texttt{11} & safe: return by value \\
+\texttt{getNum3} & no return value & safe when caller passes a valid address \\
+\texttt{getNum4} & \texttt{nullptr} & cannot dereference; the allocated object was deleted \\
+\bottomrule
+\end{tabular}
+\end{center}
+\begin{propositionblock}{A safe returning pointer must identify live data}
+That data must belong to the caller, have static lifetime, or remain dynamically allocated with a clear owner.
+\end{propositionblock}
+\end{frame}
+
+% FRAME 33
+\begin{frame}[fragile]{A function pointer stores which operation to call}
+\begin{columns}[T,onlytextwidth]
+\begin{column}{0.57\textwidth}
+\begin{lstlisting}
+int addition(int a, int b)
+{
+    return a + b;
+}
+
+int (*operation)(int, int) = addition;
+int result = operation(1, 2);
+\end{lstlisting}
+\end{column}
+\begin{column}{0.39\textwidth}
+\small
+\explain{Return type}{The pointed-to function returns \texttt{int}.}
+\explain{Parameter list}{It accepts two \texttt{int} arguments.}
+\explain{Behavior as data}{Assign another compatible function to change the operation without changing the calling code.}
+\end{column}
+\end{columns}
+\end{frame}
+
+% FRAME 34
+\begin{frame}[fragile]{12 | Complete a function pointer declaration -- Problem}
+\problemmeta{Lecture 3 addition example}{Match the exact signature}
+\begin{lstlisting}
+int addition(int a, int b)
+{
+    return a + b;
+}
+
+int (/* pointer syntax */)(int, int) = addition;
+int result = /* invoke through pointer */(1, 2);
+std::cout << result << std::endl;
+\end{lstlisting}
+\begin{illustrationblock}{Why the parentheses matter}
+Without parentheses around \texttt{*operation}, the declaration describes a function returning a pointer, not a pointer to a function.
+\end{illustrationblock}
+\end{frame}
+
+% FRAME 35
+\begin{frame}[fragile]{12 | Complete a function pointer declaration -- Solution}
+\begin{lstlisting}[style=solutioncpp]
+int addition(int a, int b)
+{
+    return a + b;
+}
+
+int (*operation)(int, int) = addition;
+int result = operation(1, 2);
+\end{lstlisting}
+\begin{columns}[T,onlytextwidth]
+\begin{column}{0.48\textwidth}
+\begin{definitionblock}{Compatible functions}
+\texttt{subtraction}, \texttt{maximum}, or any other function with signature \texttt{int(int,int)} can be assigned.
+\end{definitionblock}
+\end{column}
+\begin{column}{0.48\textwidth}
+\begin{propositionblock}{Invariant call site}
+The expression \texttt{operation(a,b)} stays unchanged while the selected behavior changes.
+\end{propositionblock}
+\end{column}
+\end{columns}
+\end{frame}
+
+% FRAME 36
+\begin{frame}{One CRR engine should not hard-code one payoff}
+\begin{columns}[c,onlytextwidth]
+\begin{column}{0.44\textwidth}
+\centering
+Model data and $q$\par
+$\downarrow$\par
+Terminal stock prices\par
+$\downarrow$\par
+\textbf{Selected payoff function}\par
+$\downarrow$\par
+Same backward induction
+\end{column}
+\begin{column}{0.52\textwidth}
+\begin{definitionblock}{What varies}
+At expiry, a call, put, or digital option applies a different function to the same stock value $S(N,i)$.
+\end{definitionblock}
+\begin{propositionblock}{What stays fixed}
+\texttt{RiskNeutProb}, \texttt{CalculateAssetPrice}, the loops, discounting, and array storage do not change.
+\end{propositionblock}
+\end{column}
+\end{columns}
+\end{frame}
+
+% FRAME 37
+\begin{frame}[fragile]{13 | Add a payoff parameter to \texttt{PriceByCRR} -- Problem}
+\problemmeta{Function pointer + dynamic array}{Complete the changing pieces}
+\begin{lstlisting}[style=tinycpp]
+double* PriceByCRR(double S0, double U, double D,
+                   double R, int N, double K,
+                   double (/* name */)(double, double))
+{
+    double q = RiskNeutProb(U, D, R);
+    double* Price = new double[/* size */];
+    for (int i = 0; i <= N; ++i)
+    {
+        double stock = CalculateAssetPrice(S0, U, D, N, i);
+        Price[i] = /* call selected payoff */;
+    }
+    // backward induction follows
+}
+\end{lstlisting}
+\end{frame}
+
+% FRAME 38
+\begin{frame}[fragile]{13 | The terminal row calls the selected payoff -- Solution A}
+\begin{lstlisting}[style=tinycpp]
+double* PriceByCRR(double S0, double U, double D,
+                   double R, int N, double K,
+                   double (*Payoff)(double, double))
+{
+    double q = RiskNeutProb(U, D, R);
+    double* Price = new double[N + 1];
+    for (int i = 0; i <= N; ++i)
+    {
+        double stock = CalculateAssetPrice(S0, U, D, N, i);
+        Price[i] = Payoff(stock, K);
+    }
+\end{lstlisting}
+\begin{propositionblock}{Single substitution point}
+Only the terminal payoff evaluation depends on the option type.
+\end{propositionblock}
+\end{frame}
+
+% FRAME 39
+\begin{frame}[fragile]{13 | Backward induction remains unchanged -- Solution B}
+\begin{lstlisting}[style=solutioncpp]
+    for (int n = N - 1; n >= 0; --n)
+    {
+        for (int i = 0; i <= n; ++i)
+        {
+            Price[i] =
+                (q * Price[i + 1]
+                 + (1.0 - q) * Price[i]) / R;
+        }
+    }
+    return Price;
+}
+\end{lstlisting}
+\begin{definitionblock}{Ownership transfer}
+The returned pointer owns an array created with \texttt{new[]}. The caller reads \texttt{Price[0]} and must eventually call \texttt{delete[]}.
+\end{definitionblock}
+\end{frame}
+
+% FRAME 40
+\begin{frame}[fragile]{14 | Complete call and put payoff functions -- Problem}
+\problemmeta{Same signature, different rule}{Fill both branches}
+\begin{lstlisting}
+double CallPayoff(double z, double K)
+{
+    if (/* in the money */) return /* payoff */;
+    return 0.0;
+}
+
+double PutPayoff(double z, double K)
+{
+    return (/* in the money */) ? /* payoff */ : 0.0;
+}
+\end{lstlisting}
+\begin{definitionblock}{Acceptance cases at $K=100$}
+$z=80$: call $0$, put $20$; \quad $z=120$: call $20$, put $0$.
+\end{definitionblock}
+\end{frame}
+
+% FRAME 41
+\begin{frame}[fragile]{14 | Complete call and put payoff functions -- Solution}
+\begin{lstlisting}[style=solutioncpp]
+double CallPayoff(double z, double K)
+{
+    if (z > K) return z - K;
+    return 0.0;
+}
+
+double PutPayoff(double z, double K)
+{
+    return (z < K) ? (K - z) : 0.0;
+}
+\end{lstlisting}
+\begin{propositionblock}{Why one pointer type accepts both}
+Both functions return \texttt{double} and accept exactly two \texttt{double} parameters.
+\end{propositionblock}
+\end{frame}
+
+% FRAME 42
+\begin{frame}[fragile]{15 | Price a call and a put without leaking memory -- Problem}
+\problemmeta{Lecture 3 driver}{Complete selection and cleanup}
+\begin{lstlisting}[style=tinycpp]
+double* optionPrice = nullptr;
+
+optionPrice = PriceByCRR(S0, U, D, R, N, K,
+                         /* call function */);
+std::cout << optionPrice[0] << std::endl;
+/* release array */;
+optionPrice = nullptr;
+
+optionPrice = PriceByCRR(S0, U, D, R, N, K,
+                         /* put function */);
+std::cout << optionPrice[0] << std::endl;
+/* release array */;
+optionPrice = nullptr;
+\end{lstlisting}
+\end{frame}
+
+% FRAME 43
+\begin{frame}[fragile]{15 | Price a call and a put without leaking memory -- Solution}
+\begin{lstlisting}[style=tinycpp]
+double* optionPrice = nullptr;
+
+optionPrice = PriceByCRR(S0, U, D, R, N, K,
+                         CallPayoff);
+std::cout << optionPrice[0] << std::endl;
+delete[] optionPrice;
+optionPrice = nullptr;
+
+optionPrice = PriceByCRR(S0, U, D, R, N, K,
+                         PutPayoff);
+std::cout << optionPrice[0] << std::endl;
+delete[] optionPrice;
+optionPrice = nullptr;
+\end{lstlisting}
+\begin{propositionblock}{Lecture 3 parameters}
+For $S_0=106$, $U=1.15125$, $D=0.86862$, $R=1.00545$, $N=8$, $K=100$: call $=21.68$, put $=11.43$.
+\end{propositionblock}
+\end{frame}
+
+% FRAME 44
+\begin{frame}[fragile]{Overloading lets one name serve two input shapes}
+\begin{lstlisting}
+int GetInputData(double& S0, double& U,
+                 double& D, double& R);
+
+int GetInputData(int& N, double& K);
+
+GetInputData(S0, U, D, R); // model overload
+GetInputData(N, K);        // option overload
+\end{lstlisting}
+\begin{definitionblock}{How the compiler chooses}
+The name is the same, but the number and types of arguments are different. The matching parameter list selects the overload.
+\end{definitionblock}
+\begin{illustrationblock}{Return type is not enough}
+Two functions cannot be overloaded only by changing their return type.
+\end{illustrationblock}
+\end{frame}
+
+% FRAME 45
+\begin{frame}[fragile,shrink=4]{16 | Add digital options without changing CRR -- Problem}
+\problemmeta{Lecture 3 extension}{Complete two new strategies}
+\begin{lstlisting}
+double DigitCallPayoff(double z, double K)
+{
+    return (/* condition */) ? 1.0 : 0.0;
+}
+
+double DigitPutPayoff(double z, double K)
+{
+    return (/* condition */) ? 1.0 : 0.0;
+}
+
+double* digitalCall = PriceByCRR(
+    S0, U, D, R, N, K, /* function */);
+\end{lstlisting}
+\begin{definitionblock}{Boundary convention}
+In the lecture, both digital payoffs return zero when $z=K$.
+\end{definitionblock}
+\end{frame}
+
+% FRAME 46
+\begin{frame}[fragile,shrink=3]{16 | Add digital options without changing CRR -- Solution}
+\begin{lstlisting}[style=solutioncpp]
+double DigitCallPayoff(double z, double K)
+{
+    return (z > K) ? 1.0 : 0.0;
+}
+
+double DigitPutPayoff(double z, double K)
+{
+    return (z < K) ? 1.0 : 0.0;
+}
+
+double* digitalCall = PriceByCRR(
+    S0, U, D, R, N, K, DigitCallPayoff);
+delete[] digitalCall;
+\end{lstlisting}
+\begin{propositionblock}{Open/closed design}
+The pricer is open to a new payoff function but closed to edits in its backward-induction algorithm.
+\end{propositionblock}
+\end{frame}
+
+% FRAME 47
+\begin{frame}{The pointer story now forms one complete pricing workflow}
+\begin{columns}[c,onlytextwidth]
+\begin{column}{0.46\textwidth}
+\centering
+Address and dereference\par
+$\downarrow$\par
+Array and dynamic lifetime\par
+$\downarrow$\par
+Function pointer selects payoff\par
+$\downarrow$\par
+One CRR engine prices many claims
+\end{column}
+\begin{column}{0.50\textwidth}
+\begin{propositionblock}{Three questions before running code}
+\begin{enumerate}
+\item What object or function does this pointer identify?
+\item Is that target still alive and compatible?
+\item Who owns any dynamic memory and releases it?
+\end{enumerate}
+\end{propositionblock}
+\end{column}
+\end{columns}
+\end{frame}
+
+% FRAME 48 -- reserve section
+\begin{frame}{Brainteasers combine the Lecture 3 tools}
+\begin{columns}[c,onlytextwidth]
+\begin{column}{0.47\textwidth}
+\begin{definitionblock}{For each challenge}
+\begin{enumerate}
+\item Trace the pointers by hand.
+\item Complete the missing operations.
+\item State the lifetime and bounds invariant.
+\item Give one boundary test.
+\end{enumerate}
+\end{definitionblock}
+\end{column}
+\begin{column}{0.49\textwidth}
+\begin{illustrationblock}{Difficulty ladder}
+Reverse an array, compact values in place, solve a sorted pair sum, then select a payoff function dynamically.
+\end{illustrationblock}
+\medskip
+These can be used as the final class challenge or as reserve practice.
+\end{column}
+\end{columns}
+\end{frame}
+
+% FRAME 49
+\begin{frame}[fragile,shrink=6]{Brainteaser 01 | Reverse an array with two raw pointers -- Problem}
+\problemmeta{In-place two pointers}{Complete movement and swap}
+\begin{lstlisting}[style=tinycpp]
+void Reverse(int* begin, int* end)
+{
+    while (begin < end)
+    {
+        /* move end from one-past-last to last */;
+        if (begin >= end) break;
+        int temp = /* left value */;
+        *begin = /* right value */;
+        *end = temp;
+        /* move begin right */;
+    }
+}
+
+int a[] = {1, 2, 3, 4, 5};
+Reverse(a, a + 5);
+\end{lstlisting}
+\begin{definitionblock}{Target}
+The array becomes \texttt{\{5,4,3,2,1\}} in $O(n)$ time and $O(1)$ extra space.
+\end{definitionblock}
+\end{frame}
+
+% FRAME 50
+\begin{frame}[fragile]{Brainteaser 01 | Reverse an array with two raw pointers -- Solution}
+\begin{lstlisting}[style=solutioncpp]
+void Reverse(int* begin, int* end)
+{
+    while (begin < end)
+    {
+        --end;
+        if (begin >= end) break;
+        int temp = *begin;
+        *begin = *end;
+        *end = temp;
+        ++begin;
+    }
+}
+\end{lstlisting}
+\begin{propositionblock}{Invariant}
+Elements outside the half-open interval \texttt{[begin,end)} are already in their final reversed positions.
+\end{propositionblock}
+\end{frame}
+
+% FRAME 51
+\begin{frame}[fragile]{Brainteaser 02 | Compact non-zero values in place -- Problem}
+\problemmeta{Read and write pointers}{Return the new logical end}
+\begin{lstlisting}[style=tinycpp]
+int* CompactNonZero(int* begin, int* end)
+{
+    int* write = begin;
+    for (int* read = begin; read != end; ++read)
+    {
+        if (/* keep this value */)
+        {
+            /* copy to output position */;
+            /* advance output position */;
+        }
+    }
+    return /* one-past-last kept value */;
+}
+\end{lstlisting}
+\begin{definitionblock}{Example}
+\texttt{\{0,5,0,-2,7\}} begins with \texttt{\{5,-2,7\}} after compaction; the returned pointer minus \texttt{begin} equals \texttt{3}.
+\end{definitionblock}
+\end{frame}
+
+% FRAME 52
+\begin{frame}[fragile]{Brainteaser 02 | Compact non-zero values in place -- Solution}
+\begin{lstlisting}[style=solutioncpp]
+int* CompactNonZero(int* begin, int* end)
+{
+    int* write = begin;
+    for (int* read = begin; read != end; ++read)
+    {
+        if (*read != 0)
+        {
+            *write = *read;
+            ++write;
+        }
+    }
+    return write;
+}
+\end{lstlisting}
+\begin{propositionblock}{Invariant}
+\texttt{[begin,write)} contains exactly the non-zero values seen so far, in their original order.
+\end{propositionblock}
+\end{frame}
+
+% FRAME 53
+\begin{frame}[fragile]{Brainteaser 03 | Find a target sum in a sorted array -- Problem}
+\problemmeta{Const pointers + linear scan}{Move the correct side}
+\begin{lstlisting}[style=tinycpp]
+bool HasPairSum(const int* values, int n, int target)
+{
+    const int* left = values;
+    const int* right = values + n - 1;
+    while (left < right)
+    {
+        int sum = *left + *right;
+        if (sum == target) return true;
+        if (sum < target) /* move left */;
+        else              /* move right */;
+    }
+    return false;
+}
+\end{lstlisting}
+\begin{definitionblock}{Example}
+\texttt{\{1,2,4,7,11\}}, target \texttt{9} returns \texttt{true} from $2+7$.
+\end{definitionblock}
+\end{frame}
+
+% FRAME 54
+\begin{frame}[fragile]{Brainteaser 03 | Find a target sum in a sorted array -- Solution}
+\begin{lstlisting}[style=solutioncpp]
+if (sum == target) return true;
+if (sum < target) ++left;
+else              --right;
+\end{lstlisting}
+\begin{columns}[T,onlytextwidth]
+\begin{column}{0.48\textwidth}
+\begin{definitionblock}{Why moving left works}
+The array is sorted. If the sum is too small, decreasing the right value cannot help; increase the left value.
+\end{definitionblock}
+\end{column}
+\begin{column}{0.48\textwidth}
+\begin{propositionblock}{Complexity}
+Each pointer moves inward at most $n-1$ times: $O(n)$ time and $O(1)$ extra space.
+\end{propositionblock}
+\end{column}
+\end{columns}
+\end{frame}
+
+% FRAME 55
+\begin{frame}[fragile]{Brainteaser 04 | Return the selected payoff function -- Problem}
+\problemmeta{Function pointer as a return value}{Complete three branches}
+\begin{lstlisting}[style=tinycpp]
+using Payoff = double (*)(double, double);
+
+Payoff SelectPayoff(char code)
+{
+    if (code == 'C') return /* call */;
+    if (code == 'P') return /* put */;
+    return /* no valid function */;
+}
+
+Payoff payoff = SelectPayoff('P');
+if (payoff != nullptr)
+    std::cout << payoff(80.0, 100.0);
+\end{lstlisting}
+\end{frame}
+
+% FRAME 56
+\begin{frame}[fragile]{Brainteaser 04 | Return the selected payoff function -- Solution}
+\begin{lstlisting}[style=solutioncpp]
+using Payoff = double (*)(double, double);
+
+Payoff SelectPayoff(char code)
+{
+    if (code == 'C') return CallPayoff;
+    if (code == 'P') return PutPayoff;
+    return nullptr;
+}
+\end{lstlisting}
+\begin{definitionblock}{Safe call site}
+Check the returned pointer before invoking it. With code \texttt{'P'}, \texttt{payoff(80,100)} returns \texttt{20}.
+\end{definitionblock}
+\begin{illustrationblock}{Extension}
+Add \texttt{'D'} for a digital call without changing the calling code.
+\end{illustrationblock}
+\end{frame}
+
+% FRAME 57
+\begin{frame}{The final test is to explain each star and each delete}
+\begin{columns}[c,onlytextwidth]
+\begin{column}{0.47\textwidth}
+\begin{definitionblock}{Exit ticket}
+\begin{enumerate}
+\item What does \texttt{*} mean here?
+\item Is the target alive and in bounds?
+\item Does \texttt{const} protect the pointer or the value?
+\item Who owns the allocation?
+\end{enumerate}
+\end{definitionblock}
+\end{column}
+\begin{column}{0.49\textwidth}
+\begin{propositionblock}{Transfer to CRR}
+The payoff function pointer changes the terminal condition. It does not change the tree mechanics, risk-neutral probability, or backward induction.
+\end{propositionblock}
+\medskip
+If you can answer the four questions before running the program, you can debug pointer code instead of guessing at addresses.
+\end{column}
+\end{columns}
+\end{frame}
+
+\end{document}
