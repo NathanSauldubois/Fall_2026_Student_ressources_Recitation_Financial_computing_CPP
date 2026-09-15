@@ -182,7 +182,7 @@
 \author{}
 \date{}
 
-% 36 core frames, planned for approximately 100 minutes, plus reserve practice.
+% 38 core frames, planned for approximately 100 minutes, plus reserve practice.
 % Source baseline: Lecture 2, Topic 2, pp. 7--37.
 % Visual and exercise conventions: Recitation 1, Decks 1 and 5.
 % Model: gross factors, S0 > 0, 0 < D < R < U, European call.
@@ -656,22 +656,19 @@ int GetInputData(
 \end{frame}
 
 % FRAME 20 -- checkpoint
-\begin{frame}{The interfaces now describe the data flow}
+\begin{frame}{Each Lecture 2 function enters CRR at a specific moment}
 \begin{columns}[c,onlytextwidth]
 \begin{column}{0.47\textwidth}
-\begin{definitionblock}{Read or compute}
-\texttt{GetInputData} changes caller variables.\par
-\texttt{CalculateAssetPrice} returns one computed value.\par
-\texttt{RiskNeutProb} returns one computed value.
+\begin{definitionblock}{Before pricing}
+\texttt{GetInputData} reads the model inputs.\par
+\texttt{ValidateInputData} accepts or rejects them.\par
+\texttt{OptionPricer01.cpp} calls \texttt{PriceByCRR} only after valid data.
 \end{definitionblock}
 \end{column}
 \begin{column}{0.49\textwidth}
-\begin{definitionblock}{Protect the calculation}
-\texttt{ValidateInputData} checks model invariants before a denominator, probability, or tree is constructed.
+\begin{definitionblock}{Inside \texttt{PriceByCRR}}
+\texttt{RiskNeutProb} supplies $q$. At expiry, \texttt{CalculateAssetPrice} supplies $S(N,i)$ and \texttt{CallPayoff} supplies $H(N,i)$. Backward induction then combines child values.
 \end{definitionblock}
-\begin{illustrationblock}{Say it aloud}
-Which functions need references, and which do not?
-\end{illustrationblock}
 \end{column}
 \end{columns}
 \end{frame}
@@ -723,9 +720,9 @@ double CallPayoff(double z, double K)
 \end{frame}
 
 % FRAME 23 -- Activity 9 problem
-\begin{frame}[fragile]{09 | Build the terminal payoff row -- Problem}
+\begin{frame}[fragile]{09 | At expiry CRR calls two functions -- Problem}
 \problemmeta{Loop + two function calls}{Complete the row}
-At expiry $N$, each array entry is $H(N,i)=h(S(N,i))$.
+At expiry $N$, \texttt{PriceByCRR} first calls \texttt{CalculateAssetPrice} for $S(N,i)$, then calls \texttt{CallPayoff} to obtain $H(N,i)=h(S(N,i))$.
 \begin{lstlisting}
 double Price[SIZE] = { 0.0 };
 
@@ -742,7 +739,7 @@ Complete the stock row $[\_\_,\_\_,\_\_]$ and payoff row $[\_\_,\_\_,\_\_]$.
 \end{frame}
 
 % FRAME 24 -- Activity 9 solution
-\begin{frame}[fragile]{09 | Build the terminal payoff row -- Solution}
+\begin{frame}[fragile]{09 | At expiry CRR calls two functions -- Solution}
 \begin{columns}[T,onlytextwidth]
 \begin{column}{0.62\textwidth}
 \begin{lstlisting}[style=solutioncpp]
@@ -766,8 +763,8 @@ for (int i = 0; i <= N; ++i)
 \end{frame}
 
 % FRAME 25 -- trace
-\begin{frame}{Backward induction shrinks one row at a time}
-For $q\approx0.48413$ and $R=1.00545$, begin with the terminal row $[0,6.00,40.49]$.
+\begin{frame}{After expiry, CRR needs $q$ and two child values}
+\texttt{PriceByCRR} calls \texttt{RiskNeutProb(U, D, R)} once; it returns $q\approx0.48413$. With $R=1.00545$, begin with the terminal row $[0,6.00,40.49]$.
 \begin{center}
 \renewcommand{\arraystretch}{1.35}
 \begin{tabular}{ccl}
@@ -878,7 +875,7 @@ for (int n = N - 1; n >= 0; --n)
 \end{frame}
 
 % FRAME 30 -- Activity 12 problem A
-\begin{frame}[fragile]{12 | Assemble PriceByCRR -- Problem A}
+\begin{frame}[fragile]{12 | PriceByCRR begins with validation and $q$ -- Problem A}
 \problemmeta{Guard + initialization}{Complete the preconditions}
 \begin{lstlisting}[style=tinycpp]
 double PriceByCRR(double S0, double U, double D,
@@ -892,7 +889,7 @@ double PriceByCRR(double S0, double U, double D,
         return -1.0;
     }
 
-    double q = /* helper call */;
+    double q = /* call RiskNeutProb(U, D, R) */;
     double Price[SIZE] = { 0.0 };
     // Next: construct the terminal row.
 \end{lstlisting}
@@ -902,7 +899,7 @@ Why does \texttt{SIZE = 9} allow $N=8$ but reject $N=9$?
 \end{frame}
 
 % FRAME 31 -- Activity 12 problem B
-\begin{frame}[fragile]{12 | Assemble PriceByCRR -- Problem B}
+\begin{frame}[fragile]{12 | PriceByCRR builds expiry then moves backward -- Problem B}
 \problemmeta{Terminal row + backward pass}{Connect the completed pieces}
 \begin{lstlisting}[style=tinycpp]
     for (int i = 0; i <= N; ++i)
@@ -926,7 +923,7 @@ Point to the base case, the recurrence, and the final answer in this function.
 \end{frame}
 
 % FRAME 32 -- Activity 12 solution A
-\begin{frame}[fragile]{12 | Assemble PriceByCRR -- Solution A}
+\begin{frame}[fragile]{12 | PriceByCRR begins with validation and $q$ -- Solution A}
 \begin{lstlisting}[style=tinycpp]
 double PriceByCRR(double S0, double U, double D,
                   double R, const int N, double K)
@@ -951,7 +948,7 @@ double PriceByCRR(double S0, double U, double D,
 \end{frame}
 
 % FRAME 33 -- Activity 12 solution B
-\begin{frame}[fragile]{12 | Assemble PriceByCRR -- Solution B}
+\begin{frame}[fragile]{12 | PriceByCRR builds expiry then moves backward -- Solution B}
 \begin{lstlisting}[style=tinycpp]
     for (int n = N - 1; n >= 0; --n)
     {
@@ -979,7 +976,51 @@ At any moment, the active prefix of \texttt{Price} represents one complete time 
 \end{columns}
 \end{frame}
 
-% FRAME 34 -- Lecture 2 driver program
+% FRAME 34 -- delta hedge concept
+\begin{frame}{A CRR node gives both an option value and a delta hedge}
+At a node $(n,i)$, replicate the option over one step with shares of stock and risk-free cash:
+\[
+\Delta(n,i)=
+\frac{H(n+1,i+1)-H(n+1,i)}
+     {S(n+1,i+1)-S(n+1,i)}.
+\]
+\begin{columns}[T,onlytextwidth]
+\begin{column}{0.47\textwidth}
+\begin{definitionblock}{Interpretation}
+Hold $\Delta$ shares. Put the remaining amount in the risk-free account (or borrow it when it is negative). The portfolio has the same up and down values as the option.
+\end{definitionblock}
+\end{column}
+\begin{column}{0.49\textwidth}
+\begin{definitionblock}{Where the stock values come from}
+\texttt{CalculateAssetPrice} provides the two child prices $S(n+1,i)$ and $S(n+1,i+1)$. The array \texttt{Price} holds the corresponding option values.
+\end{definitionblock}
+\end{column}
+\end{columns}
+\end{frame}
+
+% FRAME 35 -- Activity 13 delta implementation
+\begin{frame}[fragile]{13 | Compute delta before overwriting \texttt{Price[i]}}
+\begin{columns}[T,onlytextwidth]
+\begin{column}{0.59\textwidth}
+\begin{lstlisting}[style=solutioncpp]
+double Su = CalculateAssetPrice(S0, U, D, n + 1, i + 1);
+double Sd = CalculateAssetPrice(S0, U, D, n + 1, i);
+double delta = (Price[i + 1] - Price[i]) / (Su - Sd);
+
+Price[i] = (q * Price[i + 1]
+            + (1.0 - q) * Price[i]) / R;
+\end{lstlisting}
+\end{column}
+\begin{column}{0.38\textwidth}
+\small
+\explain{Lecture 2 $N=2$ root}{$S_d=92.0737$, $S_u=122.0325$, $H_d=2.8890$, $H_u=22.5745$.}
+\explain{Hedge}{$\Delta\approx0.6571$: hold $0.6571$ share. Cash is $H(0,0)-\Delta S_0\approx-57.30$, so borrow $57.30$.}
+\explain{Order matters}{Calculate delta before replacing \texttt{Price[i]}; it needs both child option values.}
+\end{column}
+\end{columns}
+\end{frame}
+
+% FRAME 36 -- Lecture 2 driver program
 \begin{frame}[fragile]{OptionPricer01.cpp runs the Lecture 2 example}
 \begin{columns}[T,onlytextwidth]
 \begin{column}{0.67\textwidth}
@@ -1014,7 +1055,7 @@ int main()
 \end{columns}
 \end{frame}
 
-% FRAME 35 -- tests
+% FRAME 37 -- tests
 \begin{frame}{Tests should target boundaries and invariants}
 \scriptsize
 \begin{center}
@@ -1036,7 +1077,7 @@ Zero strike & set $K=0$ & equal to $S_0=106$ & discount/update error \\
 \end{propositionblock}
 \end{frame}
 
-% FRAME 36 -- core close
+% FRAME 38 -- core close
 \begin{frame}{One algorithm now has a line-by-line explanation}
 \begin{columns}[c,onlytextwidth]
 \begin{column}{0.46\textwidth}

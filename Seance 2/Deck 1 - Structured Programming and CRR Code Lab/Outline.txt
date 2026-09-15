@@ -14,7 +14,7 @@ pricer because they have rebuilt it from independently testable functions and
 verified the data flow from model inputs to Price[0].
 
 FORMAT
-36 core Beamer frames, approximately 100 minutes. Twelve guided activities use
+38 core Beamer frames, approximately 100 minutes. Thirteen guided activities use
 a problem frame followed by a solution frame (the final integration activity
 uses two problem and two solution frames). Students first predict or complete
 code, then compare and explain. Ten additional reserve frames at the end reuse
@@ -26,10 +26,10 @@ TIMING
 00:06-00:27  Stock nodes, nested loops, and flat-array storage         21 min
 00:27-00:36  Model invariants and validation                           9 min
 00:36-00:56  Functions, namespaces, values, and references             20 min
-00:56-01:12  Payoff and terminal-row construction                      16 min
-01:12-01:26  CRR backward induction and overwrite order                14 min
-01:26-01:37  Assemble and run the Lecture 2 pricer                      11 min
-01:37-01:40  Test matrix and exit ticket                                3 min
+00:56-01:11  Payoff and terminal-row construction                      15 min
+01:11-01:24  CRR backward induction and overwrite order                13 min
+01:24-01:38  Assemble the pricer and derive its delta hedge            14 min
+01:38-01:40  Test matrix and exit ticket                                2 min
 Total                                                               100 min
 
 ACTIVITIES
@@ -45,6 +45,7 @@ ACTIVITIES
 10. Complete the backward-induction loops and update.
 11. Diagnose why a decreasing inner loop corrupts in-place data.
 12. Assemble a guarded, standard-C++ PriceByCRR function.
+13. Compute the local CRR delta before overwriting child option values.
 
 RESERVE PRACTICE FROM RECITATION 1 DECK 5
 - Count positive values.
@@ -64,6 +65,8 @@ TECHNICAL NOTES
 - CRR uses the Lecture 2 parameters S0=106, U=1.15125, D=0.86862,
   R=1.00545, K=100. For a short N=2 trace, terminal payoffs are approximately
   [0,6.00,40.49], the time-1 row is [2.8890,22.5745], and Price[0] is 12.3521.
+  At the root, delta is approximately 0.6571: hold 0.6571 share and borrow
+  approximately 57.30. Delta must be computed before the in-place overwrite.
   The complete Lecture 2 N=8 program returns 21.68.
 - Solution frames are intentionally separate so the instructor can stop before
   revealing them.
